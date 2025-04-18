@@ -23,7 +23,8 @@ jobs:
     #source "/home/luchik/.bashrc"
     - name: Install YC CLI
       run: |
-        curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -a        
+        curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -a 
+        sudo apt-get install -y jq       
         echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH 
 
     # Аутентификация в Yandex Cloud
@@ -31,8 +32,9 @@ jobs:
       run: |
         yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
         yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
-        echo "${{ secrets.YC_SA_KEY }}" > key.json
+        echo '${{ secrets.YC_SA_KEY }}' | jq -r . > key.json  # Фикс здесь!
         yc config set service-account-key key.json
+        rm -f key.json
 
     # Создание Kubernetes-кластера
     - name: Create Yandex Managed Kubernetes Cluster
