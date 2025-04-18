@@ -39,6 +39,18 @@ jobs:
     # Создание Kubernetes-кластера
     - name: Create Yandex Managed Kubernetes Cluster
       run: |
+        yc managed-kubernetes cluster create
+          --name ${{ env.YC_CLUSTER_NAME }} \
+          --network-name yc-auto-network \
+          --zone ru-central1-a \
+          --subnet-name yc-auto-subnet-0 \
+          --public-ip \
+          --service-account-id aje7f88hqas3q35b9msq \
+          --node-service-account-id ajenidupv100n3qr1kl1
+
+    # Создание Kubernetes-кластера
+    - name: Create Yandex Managed Kubernetes Cluster
+      run: |
         yc managed-kubernetes cluster create \
           --name ${{ env.YC_CLUSTER_NAME }} \
           --network-name ${{ env.YC_NETWORK_NAME }} \
@@ -56,6 +68,21 @@ jobs:
           --disk-size 50 \
           --service-account-name default \
           --node-service-account-name default
+
+    # Создание node-group для Kubernetes-кластера
+    - name: Create Yandex Managed Kubernetes Cluster node-group
+      run: |
+        yc managed-kubernetes node-group create \
+          --name k8s-demo-ng `
+          --cluster-name k8s-demo `
+          --platform standard-v3 `
+          --cores 2 `
+          --memory 4 `
+          --core-fraction 50 `
+          --disk-type network-ssd `
+          --fixed-size 2 `
+          --network-interface subnets=yc-auto-subnet-0,ipv4-address=nat,security-group-ids=[<идентификаторы_групп_безопасности>] `
+          --async
 
     # Получение kubeconfig
     - name: Get Kubeconfig
