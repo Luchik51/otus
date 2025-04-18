@@ -38,7 +38,8 @@ jobs:
 
     # Проверка Аутентификация в Yandex Cloud
     - name: Test YC CLI
-      run: yc config get folder-id
+      run: |
+        echo "Folder ID: $(yc config get folder-id)"  # Выводим результат
 
     # Создание Kubernetes-кластера
     - name: Create Yandex Managed Kubernetes Cluster
