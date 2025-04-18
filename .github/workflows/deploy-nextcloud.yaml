@@ -45,13 +45,13 @@ jobs:
     # Создание Kubernetes-кластера
     - name: Create Yandex Managed Kubernetes Cluster
       run: |
-        yc managed-kubernetes cluster create
-          --name ${{ env.YC_CLUSTER_NAME }} \
-          --network-name yc-auto-network \
-          --zone ru-central1-a \
-          --subnet-name yc-auto-subnet-0 \
-          --public-ip \
-          --service-account-id aje7f88hqas3q35b9msq \
+        yc managed-kubernetes cluster create  \
+          --name k8s-demo  \
+          --network-name yc-auto-network  \
+          --zone ru-central1-a  \
+          --subnet-name yc-auto-network-ru-central1-a  \
+          --public-ip  \
+          --service-account-id aje7f88hqas3q35b9msq  \
           --node-service-account-id ajenidupv100n3qr1kl1
 
     # Создание Kubernetes-кластера
