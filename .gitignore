@@ -1,0 +1,12 @@
+**/log
+*.log
+*.save
+*.zip
+#*.crt
+#*.key
+#*.pem
+#*.pfx
+#*.cer
+.trunk
+.vscode
+.env

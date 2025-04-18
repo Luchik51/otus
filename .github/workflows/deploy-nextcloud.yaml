@@ -1,0 +1,82 @@
+name: Deploy Nextcloud AIO to Yandex Kubernetes
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  YC_CLUSTER_NAME: "nextcloud-k8s"
+  YC_NETWORK_NAME: "default"
+  YC_SUBNET_NAME: "default-ru-central1-a"
+  YC_K8S_VERSION: "1.30"
+  YC_NODE_COUNT: "2"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Установка YC CLI
+    - name: Install YC CLI
+      run: |
+        curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+        echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
+
+    # Аутентификация в Yandex Cloud
+    - name: Configure YC CLI
+      run: |
+        yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
+        yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
+        echo "${{ secrets.YC_SA_KEY }}" > key.json
+        yc config set service-account-key key.json
+
+    # Создание Kubernetes-кластера
+    - name: Create Yandex Managed Kubernetes Cluster
+      run: |
+        yc managed-kubernetes cluster create \
+          --name ${{ env.YC_CLUSTER_NAME }} \
+          --network-name ${{ env.YC_NETWORK_NAME }} \
+          --zone ru-central1-a \
+          --subnet-name ${{ env.YC_SUBNET_NAME }} \
+          --public-ip \
+          --version ${{ env.YC_K8S_VERSION }} \
+          --node-count ${{ env.YC_NODE_COUNT }} \
+          --standard \
+          --platform-id standard-v2 \
+          --memory 4 \
+          --cores 2 \
+          --core-fraction 100 \
+          --disk-type network-ssd \
+          --disk-size 50 \
+          --service-account-name default \
+          --node-service-account-name default
+
+    # Получение kubeconfig
+    - name: Get Kubeconfig
+      run: |
+        yc managed-kubernetes cluster get-credentials ${{ env.YC_CLUSTER_NAME }} --external
+        kubectl config view --raw > kubeconfig.yaml
+
+    # Установка Helm
+    - name: Install Helm
+      uses: azure/setup-helm@v3
+
+    # Установка Nextcloud AIO
+    - name: Deploy Nextcloud AIO
+      run: |
+        helm repo add nextcloud-aio https://nextcloud.github.io/all-in-one/
+        helm upgrade --install nextcloud-aio nextcloud-aio/nextcloud-aio-helm-chart \
+          --namespace nextcloud \
+          --create-namespace \
+          --set ingress.enabled=true \
+          --set ingress.hosts[0].host=nextcloud.example.com \
+          --set ingress.hosts[0].paths[0].path="/" \
+          --set ingress.hosts[0].paths[0].pathType=Prefix
+
+    # Получение внешнего IP (опционально)
+    - name: Get Nextcloud External IP
+      run: |
+        kubectl get svc -n nextcloud
