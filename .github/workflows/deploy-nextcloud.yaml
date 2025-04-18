@@ -36,6 +36,12 @@ jobs:
         yc config set service-account-key key.json
         rm -f key.json
 
+    # Проверка Аутентификация в Yandex Cloud
+    - name: Configure YC CLI
+      run: |
+        $FOLDER_ID = yc config get folder-id
+        echo $FOLDER_ID
+
     # Создание Kubernetes-кластера
     - name: Create Yandex Managed Kubernetes Cluster
       run: |
