@@ -54,27 +54,6 @@ jobs:
           --service-account-id ajevntj7oel39ap5pik9  \
           --node-service-account-id ajeb7flhr5qrgem66hcm
 
-    # Создание Kubernetes-кластера
-    - name: Create Yandex Managed Kubernetes Cluster
-      run: |
-        yc managed-kubernetes cluster create \
-          --name ${{ env.YC_CLUSTER_NAME }} \
-          --network-name ${{ env.YC_NETWORK_NAME }} \
-          --zone ru-central1-a \
-          --subnet-name ${{ env.YC_SUBNET_NAME }} \
-          --public-ip \
-          --version ${{ env.YC_K8S_VERSION }} \
-          --node-count ${{ env.YC_NODE_COUNT }} \
-          --standard \
-          --platform-id standard-v2 \
-          --memory 4 \
-          --cores 2 \
-          --core-fraction 100 \
-          --disk-type network-ssd \
-          --disk-size 50 \
-          --service-account-name default \
-          --node-service-account-name default
-
     # Создание node-group для Kubernetes-кластера
     - name: Create Yandex Managed Kubernetes Cluster node-group
       run: |
