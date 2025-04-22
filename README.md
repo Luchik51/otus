@@ -37,3 +37,4 @@ helm show values nextcloud-aio/nextcloud-aio-helm-chart  > values-orig.yaml
 helm pull nextcloud-aio/nextcloud-aio-helm-chart  --untar
 helm list
 helm upgrade --install nextcloud-aio ./nextcloud-aio-helm-chart --values values.yaml
+kubectl get endpoints -n nextcloud
