@@ -35,3 +35,5 @@ helm upgrade --install nextcloud-aio nextcloud-aio/nextcloud-aio-helm-chart -f v
 helm search repo nextcloud-aio/nextcloud --versions
 helm show values nextcloud-aio/nextcloud-aio-helm-chart  > values-orig.yaml
 helm pull nextcloud-aio/nextcloud-aio-helm-chart  --untar
+helm list
+helm upgrade --install nextcloud-aio ./nextcloud-aio-helm-chart --values values.yaml

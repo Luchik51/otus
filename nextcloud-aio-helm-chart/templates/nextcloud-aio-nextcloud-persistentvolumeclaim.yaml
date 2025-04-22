@@ -6,11 +6,12 @@ metadata:
   name: nextcloud-aio-nextcloud
   namespace: "{{ .Values.NAMESPACE }}"
 spec:
-  {{- if .Values.STORAGE_CLASS }}
-  storageClassName: {{ .Values.STORAGE_CLASS }}
+  {{- if .Values.STORAGE_CLASS_NEXTCLOUD }}
+  storageClassName: {{ .Values.STORAGE_CLASS_NEXTCLOUD }}
   {{- end }}
   accessModes:
-    - ReadWriteMany
+    #- ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: {{ .Values.NEXTCLOUD_STORAGE_SIZE }}
