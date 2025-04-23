@@ -40,3 +40,9 @@ helm pull nextcloud-aio/nextcloud-aio-helm-chart  --untar
 helm list
 helm upgrade --install nextcloud-aio ./nextcloud-aio-helm-chart --values values.yaml
 kubectl get endpoints -n nextcloud
+
+Yandex
+Квоты: https://yandex.cloud/ru/docs/compute/concepts/limits
+Резервация адреса: https://yandex.cloud/ru/docs/vpc/operations/get-static-ip
+yc vpc address create --external-ipv4 zone=ru-central1-a
+yc vpc address list
