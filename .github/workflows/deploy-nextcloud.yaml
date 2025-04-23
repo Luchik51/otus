@@ -87,17 +87,19 @@ jobs:
     - name: Install Helm
       uses: azure/setup-helm@v3
 
+    # Установка CSI-драйвера
+    - name: Deploy Yandex S3
+      run: |
+        helm repo add yandex-s3 https://yandex-cloud.github.io/k8s-csi-s3/charts
+        helm install yandex-s3 yandex-s3/csi-s3 \
+          --namespace kube-system \
+          --set secret.accessKey=${{ env.YC_S3_ACCESSKEY }} \
+          --set secret.secretKey=${{ env.YC_S3_SECRETKEY }}
     # Установка Nextcloud AIO
     - name: Deploy Nextcloud AIO
       run: |
         helm repo add nextcloud-aio https://nextcloud.github.io/all-in-one/
-        helm upgrade --install nextcloud-aio nextcloud-aio/nextcloud-aio-helm-chart \
-          --namespace nextcloud \
-          --create-namespace \
-          --set ingress.enabled=true \
-          --set ingress.hosts[0].host=nextcloud.example.com \
-          --set ingress.hosts[0].paths[0].path="/" \
-          --set ingress.hosts[0].paths[0].pathType=Prefix
+        helm upgrade --install nextcloud-aio ./nextcloud-aio-helm-chart -f values.yaml
 
     # Получение внешнего IP (опционально)
     - name: Get Nextcloud External IP

@@ -30,6 +30,8 @@ https://raw.githubusercontent.com/nextcloud/all-in-one/main/nextcloud-aio-helm-c
 Nextcloud install
 helm repo add nextcloud-aio https://nextcloud.github.io/all-in-one/
 helm upgrade --install nextcloud-aio nextcloud-aio/nextcloud-aio-helm-chart -f values.yaml
+# скачанный уже
+helm upgrade --install nextcloud-aio ./nextcloud-aio-helm-chart -f values.yaml
 
 
 helm search repo nextcloud-aio/nextcloud --versions
