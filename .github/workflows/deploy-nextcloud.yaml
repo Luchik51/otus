@@ -94,7 +94,8 @@ jobs:
         helm upgrade --install yandex-s3 yandex-s3/csi-s3 \
           --namespace kube-system \
           --set secret.accessKey=${{ env.YC_S3_ACCESSKEY }} \
-          --set secret.secretKey=${{ env.YC_S3_SECRETKEY }}
+          --set secret.secretKey=${{ env.YC_S3_SECRETKEY }} \
+          --set storageClass.singleBucket=nextcloud2
     # Установка Nextcloud AIO
     - name: Deploy Nextcloud AIO
       run: |
