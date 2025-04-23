@@ -88,14 +88,15 @@ jobs:
       uses: azure/setup-helm@v3
 
     # Установка CSI-драйвера
-    - name: Deploy Yandex S3
-      run: |
-        helm repo add yandex-s3 https://yandex-cloud.github.io/k8s-csi-s3/charts
-        helm upgrade --install yandex-s3 yandex-s3/csi-s3 \
-          --namespace kube-system \
-          --set secret.accessKey=${{ env.YC_S3_ACCESSKEY }} \
-          --set secret.secretKey=${{ env.YC_S3_SECRETKEY }} \
-          --set storageClass.singleBucket=nextcloud2
+    #- name: Deploy Yandex S3
+    #  run: |
+    #    helm repo add yandex-s3 https://yandex-cloud.github.io/k8s-csi-s3/charts
+    #    helm upgrade --install yandex-s3 yandex-s3/csi-s3 \
+    #      --namespace kube-system \
+    #      --set secret.accessKey=${{ env.YC_S3_ACCESSKEY }} \
+    #      --set secret.secretKey=${{ env.YC_S3_SECRETKEY }} \
+    #      --set storageClass.singleBucket=nextcloud2
+
     # Установка Nextcloud AIO
     - name: Deploy Nextcloud AIO
       run: |
