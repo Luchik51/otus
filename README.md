@@ -22,3 +22,21 @@ https://yandex.cloud/ru/docs/managed-kubernetes/tutorials/new-kubernetes-project
 там еще надо сначала создать сеть, подсети (вроде автоматом создаються, но это не точно)
  И все это можно в теории можно сделать через github action, но наверное надо этому сервисному аккаунту тогда права админа давать .. что-то очень много изменений надо внести.
 Желательно создать 3 аккаунта
+
+
+Nextcloud values:
+https://raw.githubusercontent.com/nextcloud/all-in-one/main/nextcloud-aio-helm-chart/values.yaml
+
+Nextcloud install
+helm repo add nextcloud-aio https://nextcloud.github.io/all-in-one/
+helm upgrade --install nextcloud-aio nextcloud-aio/nextcloud-aio-helm-chart -f values.yaml
+# скачанный уже
+helm upgrade --install nextcloud-aio ./nextcloud-aio-helm-chart -f values.yaml
+
+
+helm search repo nextcloud-aio/nextcloud --versions
+helm show values nextcloud-aio/nextcloud-aio-helm-chart  > values-orig.yaml
+helm pull nextcloud-aio/nextcloud-aio-helm-chart  --untar
+helm list
+helm upgrade --install nextcloud-aio ./nextcloud-aio-helm-chart --values values.yaml
+kubectl get endpoints -n nextcloud
