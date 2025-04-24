@@ -1,0 +1,90 @@
+#replicaCount: 3
+
+service:
+  type: LoadBalancer
+  loadBalancerIP: 10.100.48.41
+
+ingress:
+  enabled: true
+  #className: nginx
+  hosts:
+    - host: notus.patio-minsk.by
+      paths:
+        - /
+
+nextcloud:
+  host: notus.patio-minsk.by
+  username: "luchik"
+  password: "111111"
+
+  extraInitContainers:
+    - name: do-something
+      image: busybox
+      command: ['sh', '-c', 'until nc -zv nextcloud-mariadb 3306; do echo "Waiting for MariaDB..."; sleep 5; done']
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: 'changeme'
+  master:
+    persistence:
+      size: 1Gi ## внес изменения, требует тестирования. Вроде работает.
+  replica:
+    persistence:
+      size: 1Gi ## внес изменения, требует тестирования.
+
+internalDatabase:
+    enabled: false
+mariadb:
+    db:
+        name: nextcloud
+        password: db-password
+        user: nextcloud
+    enabled: true
+    master:
+        persistence:
+            accessMode: ReadWriteOnce
+            enabled: true
+            size: 8Gi
+    replication:
+        enabled: false
+    rootUser:
+        password: root-db-password
+        forcePassword: true
+postgresql:
+    enabled: false
+
+# Что-то не работает после включения
+#collabora:
+#  enabled: true
+
+# Что-то не стабильно работает с этой штукой.
+#cronjob:
+#  enabled: true
+###
+#Defaulted container "nextcloud" out of: nextcloud, nextcloud-cron, mariadb-isalive (init)
+#Configuring Redis as session handler
+#=> Searching for hook scripts (*.sh) to run, located in the folder "/docker-entrypoint-hooks.d/before-starting"
+#==> Skipped: the "before-starting" folder is empty (or does not exist)
+#AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 10.2.0.98. Set the 'ServerName' directive globally to suppress this message
+#AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 10.2.0.98. Set the 'ServerName' directive globally to suppress this message
+#[Thu Apr 24 13:15:00.890582 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00163: Apache/2.4.62 (Debian) PHP/8.3.20 configured -- resuming normal operations
+#[Thu Apr 24 13:15:00.890616 2025] [core:notice] [pid 1:tid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+###
+
+metrics:
+    enabled: true
+    https: false
+    image:
+        pullPolicy: IfNotPresent
+        repository: xperimental/nextcloud-exporter
+        tag: v0.3.0
+    replicaCount: 1
+    service:
+        annotations:
+            prometheus.io/port: '9205'
+            prometheus.io/scrape: 'true'
+        labels: {}
+        type: ClusterIP
+    timeout: 5s
