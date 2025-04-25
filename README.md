@@ -59,6 +59,8 @@ kubectl get endpoints -n nextcloud
 helm delete nextcloud-aio
 helm delete yandex-s3 -n kube-system
 
+kubectl taint nodes sd-k8s4-cp node-role=infra:NoSchedule-
+
 Yandex
 Квоты: https://yandex.cloud/ru/docs/compute/concepts/limits
 Резервация адреса: https://yandex.cloud/ru/docs/vpc/operations/get-static-ip
@@ -106,12 +108,28 @@ helm upgrade --install loki grafana/loki-stack -f loki-stack-values.yaml --names
 # helm upgrade --install grafana grafana/grafana -f loki-stack-values.yaml --namespace logging --create-namespace
 helm upgrade --install loki grafana/loki-stack  --set grafana.enabled=true,prometheus.enabled=true,prometheus.alertmanager.persistentVolume.enabled=false,prometheus.server.persistentVolume.enabled=false,loki.persistence.enabled=true,loki.persistence.storageClassName=local-path,loki.persistence.size=5Gi --namespace logging --create-namespace
 Отсюда: https://techno-tim.github.io/posts/grafana-loki-kubernetes/
-Более простой вариат: https://piotrminkowski.com/2023/07/20/logging-in-kubernetes-with-loki/ ## но с примером использования - как смотреть логи.
+Более простой вариат: https://piotrminkowski.com/2023/07/20/logging-in-kubernetes-with-loki/ ## но с примером использования - как смотреть логи. (не понял)
 Еще простой вариант с примером: https://cylab.be/blog/197/deploy-loki-on-kubernetes-and-monitor-the-logs-of-your-pods
+helm upgrade --install loki grafana/loki-stack --namespace logging --create-namespace --set grafana.enabled=true
+
 Тоже простой. Надо начинать с малого: https://habr.com/ru/articles/766102/
+helm upgrade --install loki grafana/loki-stack -f loki-stack-values1.yaml --namespace logging --create-namespace
+
+kubectl -n logging port-forward service/loki-grafana 8080:80
+http://localhost:8080
+
+
+(container_memory_usage_bytes{namespace="logging"} / 1048576)
+{{container}}
+
 Но вот алертинг .. как? ни разу не делал.
 helm delete loki -n logging
 kubectl delete pvc --all -n logging
 kubectl get all -n logging
 kubectl get pvc -n logging
 ---- Конец первого тестовый запуск Loki Stack ----
+
+Поставить:
+kubectl taint nodes sd-k8s4-cp node-role.kubernetes.io/control-plane:NoSchedule
+Удалить:
+kubectl taint nodes sd-k8s4-cp node-role.kubernetes.io/control-plane:NoSchedule-
