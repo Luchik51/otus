@@ -1,0 +1,1031 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-470-rev1
+  namespace: logging
+  labels:
+    grafana_dashboard: "1"  # Важно для Sidecar!
+data:
+  470_rev1.json: |-
+    {
+      "__inputs": [
+        {
+          "name": "DS_GRAPHITE",
+          "label": "graphite",
+          "description": "Graphite datasource",
+          "type": "datasource",
+          "pluginId": "graphite",
+          "pluginName": "Graphite"
+        }
+      ],
+      "__requires": [
+        {
+          "type": "panel",
+          "id": "graph",
+          "name": "Graph",
+          "version": ""
+        },
+        {
+          "type": "panel",
+          "id": "singlestat",
+          "name": "Singlestat",
+          "version": ""
+        },
+        {
+          "type": "grafana",
+          "id": "grafana",
+          "name": "Grafana",
+          "version": "4.0.0-pre1"
+        },
+        {
+          "type": "datasource",
+          "id": "graphite",
+          "name": "Graphite",
+          "version": "1.0.0"
+        }
+      ],
+      "id": null,
+      "title": "Kubernetes Node host metrics",
+      "tags": [],
+      "style": "dark",
+      "timezone": "browser",
+      "editable": true,
+      "hideControls": false,
+      "sharedCrosshair": true,
+      "rows": [
+        {
+          "collapse": false,
+          "editable": true,
+          "height": "250px",
+          "panels": [
+            {
+              "alert": {
+                "crit": {
+                  "op": ">"
+                },
+                "warn": {
+                  "op": ">"
+                }
+              },
+              "alerting": {},
+              "aliasColors": {},
+              "bars": false,
+              "datasource": "${DS_GRAPHITE}",
+              "editable": true,
+              "error": false,
+              "fill": 2,
+              "grid": {},
+              "id": 1,
+              "legend": {
+                "alignAsTable": true,
+                "avg": true,
+                "current": false,
+                "max": false,
+                "min": false,
+                "rightSide": true,
+                "show": false,
+                "total": false,
+                "values": true
+              },
+              "lines": true,
+              "linewidth": 2,
+              "links": [],
+              "nullPointMode": "connected",
+              "percentage": false,
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "seriesOverrides": [],
+              "span": 5,
+              "stack": true,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "refId": "A",
+                  "target": "snap.$environment.$server.intel.procfs.cpu.all.system_percentage",
+                  "textEditor": false
+                },
+                {
+                  "refId": "B",
+                  "target": "snap.$environment.$server.intel.procfs.cpu.all.user_percentage",
+                  "textEditor": false
+                },
+                {
+                  "refId": "C",
+                  "target": "snap.$environment.$server.intel.procfs.cpu.all.iowait_percentage",
+                  "textEditor": false
+                },
+                {
+                  "refId": "D",
+                  "target": "snap.$environment.$server.intel.procfs.cpu.all.steal_percentage",
+                  "textEditor": false
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeShift": null,
+              "title": "CPU % (all)",
+              "tooltip": {
+                "msResolution": false,
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "type": "graph",
+              "xaxis": {
+                "show": true
+              },
+              "yaxes": [
+                {
+                  "format": "percent",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "format": "short",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ]
+            },
+            {
+              "alert": {
+                "crit": {
+                  "op": ">"
+                },
+                "warn": {
+                  "op": ">"
+                }
+              },
+              "alerting": {},
+              "aliasColors": {},
+              "bars": false,
+              "datasource": "${DS_GRAPHITE}",
+              "editable": true,
+              "error": false,
+              "fill": 1,
+              "grid": {},
+              "id": 10,
+              "legend": {
+                "alignAsTable": true,
+                "avg": true,
+                "current": false,
+                "max": false,
+                "min": false,
+                "rightSide": true,
+                "show": false,
+                "total": false,
+                "values": true
+              },
+              "lines": true,
+              "linewidth": 2,
+              "links": [],
+              "nullPointMode": "connected",
+              "percentage": false,
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "seriesOverrides": [
+                {
+                  "alias": "mem_available",
+                  "stack": "B"
+                }
+              ],
+              "span": 5,
+              "stack": true,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "refId": "A",
+                  "target": "aliasByMetric(snap.$environment.$server.intel.procfs.meminfo.mem_available)",
+                  "textEditor": false
+                },
+                {
+                  "refId": "B",
+                  "target": "aliasByMetric(snap.$environment.$server.intel.procfs.meminfo.mem_free)",
+                  "textEditor": false
+                },
+                {
+                  "refId": "C",
+                  "target": "aliasByMetric(snap.$environment.$server.intel.procfs.meminfo.mem_used)",
+                  "textEditor": false
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeShift": null,
+              "title": "Memory Available",
+              "tooltip": {
+                "msResolution": true,
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "type": "graph",
+              "xaxis": {
+                "show": true
+              },
+              "yaxes": [
+                {
+                  "format": "bits",
+                  "logBase": 1,
+                  "max": null,
+                  "min": 0,
+                  "show": true
+                },
+                {
+                  "format": "short",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ]
+            },
+            {
+              "title": "Load per CPU",
+              "error": false,
+              "span": 2,
+              "editable": true,
+              "type": "singlestat",
+              "isNew": true,
+              "id": 23,
+              "targets": [
+                {
+                  "target": "alias(snap.$environment.$server.intel.procfs.load.min1_rel, 'short term')",
+                  "refId": "A",
+                  "textEditor": false
+                }
+              ],
+              "links": [],
+              "datasource": "${DS_GRAPHITE}",
+              "maxDataPoints": 100,
+              "interval": null,
+              "cacheTimeout": null,
+              "format": "none",
+              "prefix": "",
+              "postfix": "",
+              "nullText": null,
+              "valueMaps": [
+                {
+                  "value": "null",
+                  "op": "=",
+                  "text": "N/A"
+                }
+              ],
+              "mappingTypes": [
+                {
+                  "name": "value to text",
+                  "value": 1
+                },
+                {
+                  "name": "range to text",
+                  "value": 2
+                }
+              ],
+              "rangeMaps": [
+                {
+                  "from": "null",
+                  "to": "null",
+                  "text": "N/A"
+                }
+              ],
+              "mappingType": 1,
+              "nullPointMode": "connected",
+              "valueName": "avg",
+              "prefixFontSize": "50%",
+              "valueFontSize": "200%",
+              "postfixFontSize": "50%",
+              "thresholds": "1,2",
+              "colorBackground": true,
+              "colorValue": false,
+              "colors": [
+                "rgba(50, 172, 45, 0.97)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(245, 54, 54, 0.9)"
+              ],
+              "sparkline": {
+                "show": false,
+                "full": false,
+                "lineColor": "rgb(31, 120, 193)",
+                "fillColor": "rgba(31, 118, 189, 0.18)"
+              },
+              "gauge": {
+                "show": false,
+                "minValue": 0,
+                "maxValue": 100,
+                "thresholdMarkers": true,
+                "thresholdLabels": false
+              }
+            }
+          ],
+          "title": "New row"
+        },
+        {
+          "collapse": false,
+          "editable": true,
+          "height": 137.66665649414062,
+          "panels": [
+            {
+              "alert": {
+                "crit": {
+                  "op": ">"
+                },
+                "warn": {
+                  "op": ">"
+                }
+              },
+              "alerting": {},
+              "aliasColors": {},
+              "bars": false,
+              "datasource": "${DS_GRAPHITE}",
+              "editable": true,
+              "error": false,
+              "fill": 2,
+              "grid": {},
+              "id": 14,
+              "legend": {
+                "alignAsTable": true,
+                "avg": true,
+                "current": false,
+                "max": false,
+                "min": false,
+                "rightSide": true,
+                "show": false,
+                "total": false,
+                "values": true
+              },
+              "lines": true,
+              "linewidth": 2,
+              "links": [],
+              "minSpan": 2,
+              "nullPointMode": "connected",
+              "percentage": false,
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "repeat": "cpu",
+              "seriesOverrides": [],
+              "span": 2.4,
+              "stack": true,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "refId": "A",
+                  "target": "snap.$environment.$server.intel.procfs.cpu.$cpu.system_percentage",
+                  "textEditor": true
+                },
+                {
+                  "refId": "B",
+                  "target": "snap.$environment.$server.intel.procfs.cpu.$cpu.user_percentage",
+                  "textEditor": true
+                },
+                {
+                  "refId": "C",
+                  "target": "snap.$environment.$server.intel.procfs.cpu.$cpu.idle_percentage",
+                  "textEditor": true
+                },
+                {
+                  "refId": "D",
+                  "target": "snap.$environment.$server.intel.procfs.cpu.$cpu.iowait_percentage",
+                  "textEditor": true
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeShift": null,
+              "title": "CPU $cpu %",
+              "tooltip": {
+                "msResolution": false,
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "type": "graph",
+              "xaxis": {
+                "show": true
+              },
+              "yaxes": [
+                {
+                  "format": "percent",
+                  "logBase": 1,
+                  "max": 100,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "format": "short",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ]
+            }
+          ],
+          "title": "New row"
+        },
+        {
+          "collapse": false,
+          "editable": true,
+          "height": "250px",
+          "panels": [
+            {
+              "alert": {
+                "crit": {
+                  "op": ">"
+                },
+                "warn": {
+                  "op": ">"
+                }
+              },
+              "alerting": {},
+              "aliasColors": {},
+              "bars": false,
+              "datasource": "${DS_GRAPHITE}",
+              "editable": true,
+              "error": false,
+              "fill": 1,
+              "grid": {},
+              "id": 7,
+              "legend": {
+                "avg": false,
+                "current": false,
+                "max": false,
+                "min": false,
+                "show": true,
+                "total": false,
+                "values": false
+              },
+              "lines": false,
+              "linewidth": 2,
+              "links": [],
+              "nullPointMode": "connected",
+              "percentage": false,
+              "pointradius": 1,
+              "points": true,
+              "renderer": "flot",
+              "seriesOverrides": [],
+              "span": 4,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "refId": "A",
+                  "target": "aliasByNode(snap.$environment.$server.intel.linux.iostat.device.*.r_per_sec, 7)",
+                  "textEditor": false
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeShift": null,
+              "title": "Read IOPS",
+              "tooltip": {
+                "msResolution": false,
+                "shared": true,
+                "sort": 0,
+                "value_type": "cumulative"
+              },
+              "type": "graph",
+              "xaxis": {
+                "show": true
+              },
+              "yaxes": [
+                {
+                  "format": "short",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "format": "short",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ]
+            },
+            {
+              "alert": {
+                "crit": {
+                  "op": ">"
+                },
+                "warn": {
+                  "op": ">"
+                }
+              },
+              "alerting": {},
+              "aliasColors": {},
+              "bars": false,
+              "datasource": "${DS_GRAPHITE}",
+              "editable": true,
+              "error": false,
+              "fill": 1,
+              "grid": {},
+              "id": 8,
+              "legend": {
+                "avg": false,
+                "current": false,
+                "max": false,
+                "min": false,
+                "show": true,
+                "total": false,
+                "values": false
+              },
+              "lines": false,
+              "linewidth": 2,
+              "links": [],
+              "nullPointMode": "connected",
+              "percentage": false,
+              "pointradius": 1,
+              "points": true,
+              "renderer": "flot",
+              "seriesOverrides": [],
+              "span": 4,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "refId": "A",
+                  "target": "aliasByNode(snap.$environment.$server.intel.linux.iostat.device.*.w_per_sec, 7)",
+                  "textEditor": false
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeShift": null,
+              "title": "Write IOPS",
+              "tooltip": {
+                "msResolution": false,
+                "shared": true,
+                "sort": 0,
+                "value_type": "cumulative"
+              },
+              "type": "graph",
+              "xaxis": {
+                "show": true
+              },
+              "yaxes": [
+                {
+                  "format": "short",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "format": "short",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ]
+            },
+            {
+              "alert": {
+                "crit": {
+                  "op": ">"
+                },
+                "warn": {
+                  "op": ">"
+                }
+              },
+              "alerting": {},
+              "aliasColors": {},
+              "bars": false,
+              "datasource": "${DS_GRAPHITE}",
+              "editable": true,
+              "error": false,
+              "fill": 1,
+              "grid": {},
+              "id": 16,
+              "legend": {
+                "avg": false,
+                "current": false,
+                "max": false,
+                "min": false,
+                "show": true,
+                "total": false,
+                "values": false
+              },
+              "lines": false,
+              "linewidth": 2,
+              "links": [],
+              "nullPointMode": "connected",
+              "percentage": false,
+              "pointradius": 1,
+              "points": true,
+              "renderer": "flot",
+              "seriesOverrides": [],
+              "span": 4,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "refId": "A",
+                  "target": "aliasByNode(snap.$environment.$server.intel.linux.iostat.device.*.%util, 7)",
+                  "textEditor": false
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeShift": null,
+              "title": "%Util",
+              "tooltip": {
+                "msResolution": false,
+                "shared": true,
+                "sort": 0,
+                "value_type": "cumulative"
+              },
+              "type": "graph",
+              "xaxis": {
+                "show": true
+              },
+              "yaxes": [
+                {
+                  "format": "percent",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "format": "short",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ]
+            }
+          ],
+          "title": "New row"
+        },
+        {
+          "collapse": false,
+          "editable": true,
+          "height": "250px",
+          "panels": [
+            {
+              "alert": {
+                "crit": {
+                  "op": ">"
+                },
+                "warn": {
+                  "op": ">"
+                }
+              },
+              "alerting": {},
+              "aliasColors": {},
+              "bars": false,
+              "datasource": "${DS_GRAPHITE}",
+              "editable": true,
+              "error": false,
+              "fill": 1,
+              "grid": {},
+              "id": 9,
+              "legend": {
+                "avg": false,
+                "current": false,
+                "max": false,
+                "min": false,
+                "show": true,
+                "total": false,
+                "values": false
+              },
+              "lines": true,
+              "linewidth": 2,
+              "links": [],
+              "nullPointMode": "connected",
+              "percentage": false,
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "seriesOverrides": [
+                {
+                  "alias": "/.*-out/",
+                  "transform": "negative-Y"
+                }
+              ],
+              "span": 4,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "refId": "A",
+                  "target": "aliasSub(aliasByNode(perSecond(snap.$environment.$server.intel.procfs.iface.*.bytes_recv), 6), '(.*)', '\\1-in')",
+                  "textEditor": false
+                },
+                {
+                  "refId": "B",
+                  "target": "aliasSub(aliasByNode(perSecond(snap.$environment.$server.intel.procfs.iface.*.bytes_sent), 6), '(.*)', '\\1-out')",
+                  "textEditor": false
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeShift": null,
+              "title": "Network Traffic/sec",
+              "tooltip": {
+                "msResolution": true,
+                "shared": true,
+                "sort": 0,
+                "value_type": "cumulative"
+              },
+              "type": "graph",
+              "xaxis": {
+                "show": true
+              },
+              "yaxes": [
+                {
+                  "format": "bps",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "format": "short",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ]
+            },
+            {
+              "alert": {
+                "crit": {
+                  "op": ">"
+                },
+                "warn": {
+                  "op": ">"
+                }
+              },
+              "alerting": {},
+              "aliasColors": {},
+              "bars": false,
+              "datasource": "${DS_GRAPHITE}",
+              "editable": true,
+              "error": false,
+              "fill": 1,
+              "grid": {},
+              "id": 17,
+              "legend": {
+                "avg": false,
+                "current": false,
+                "max": false,
+                "min": false,
+                "show": true,
+                "total": false,
+                "values": false
+              },
+              "lines": true,
+              "linewidth": 2,
+              "links": [],
+              "nullPointMode": "connected",
+              "percentage": false,
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "seriesOverrides": [
+                {
+                  "alias": "/.*-out/",
+                  "transform": "negative-Y"
+                }
+              ],
+              "span": 4,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "refId": "A",
+                  "target": "aliasSub(aliasByNode(perSecond(snap.$environment.$server.intel.procfs.iface.*.packets_recv), 6), '(.*)', '\\1-in')",
+                  "textEditor": false
+                },
+                {
+                  "refId": "B",
+                  "target": "aliasSub(aliasByNode(perSecond(snap.$environment.$server.intel.procfs.iface.*.packets_sent), 6), '(.*)', '\\1-out')",
+                  "textEditor": false
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeShift": null,
+              "title": "Network Packets/sec",
+              "tooltip": {
+                "msResolution": true,
+                "shared": true,
+                "sort": 0,
+                "value_type": "cumulative"
+              },
+              "type": "graph",
+              "xaxis": {
+                "show": true
+              },
+              "yaxes": [
+                {
+                  "format": "bps",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "format": "short",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ]
+            },
+            {
+              "alert": {
+                "crit": {
+                  "op": ">"
+                },
+                "warn": {
+                  "op": ">"
+                }
+              },
+              "alerting": {},
+              "aliasColors": {},
+              "bars": false,
+              "datasource": "${DS_GRAPHITE}",
+              "editable": true,
+              "error": false,
+              "fill": 1,
+              "grid": {},
+              "id": 18,
+              "legend": {
+                "avg": false,
+                "current": false,
+                "max": false,
+                "min": false,
+                "show": true,
+                "total": false,
+                "values": false
+              },
+              "lines": true,
+              "linewidth": 2,
+              "links": [],
+              "nullPointMode": "connected",
+              "percentage": false,
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "seriesOverrides": [
+                {
+                  "alias": "/.*-out/",
+                  "transform": "negative-Y"
+                }
+              ],
+              "span": 4,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "refId": "A",
+                  "target": "aliasSub(aliasByNode(perSecond(snap.$environment.$server.intel.procfs.iface.*.errs_recv), 6), '(.*)', '\\1-in')",
+                  "textEditor": false
+                },
+                {
+                  "refId": "B",
+                  "target": "aliasSub(aliasByNode(perSecond(snap.$environment.$server.intel.procfs.iface.*.errs_sent), 6), '(.*)', '\\1-out')",
+                  "textEditor": false
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeShift": null,
+              "title": "Network Errors/sec",
+              "tooltip": {
+                "msResolution": true,
+                "shared": true,
+                "sort": 0,
+                "value_type": "cumulative"
+              },
+              "type": "graph",
+              "xaxis": {
+                "show": true
+              },
+              "yaxes": [
+                {
+                  "format": "bps",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "format": "short",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ]
+            }
+          ],
+          "title": "New row"
+        }
+      ],
+      "time": {
+        "from": "now-15m",
+        "to": "now"
+      },
+      "timepicker": {
+        "now": true,
+        "refresh_intervals": [
+          "5s",
+          "10s",
+          "30s",
+          "1m",
+          "5m",
+          "15m",
+          "30m",
+          "1h",
+          "2h",
+          "1d"
+        ],
+        "time_options": [
+          "5m",
+          "15m",
+          "1h",
+          "6h",
+          "12h",
+          "24h",
+          "2d",
+          "7d",
+          "30d"
+        ]
+      },
+      "templating": {
+        "list": [
+          {
+            "allFormat": "glob",
+            "current": {},
+            "datasource": "${DS_GRAPHITE}",
+            "hide": 0,
+            "includeAll": false,
+            "multi": false,
+            "multiFormat": "glob",
+            "name": "environment",
+            "options": [],
+            "query": "snap.*",
+            "refresh": 1,
+            "refresh_on_load": false,
+            "type": "query"
+          },
+          {
+            "allFormat": "glob",
+            "current": {},
+            "datasource": "${DS_GRAPHITE}",
+            "hide": 0,
+            "includeAll": true,
+            "multi": false,
+            "multiFormat": "glob",
+            "name": "server",
+            "options": [],
+            "query": "snap.$environment.*",
+            "refresh": 1,
+            "refresh_on_load": false,
+            "regex": "",
+            "type": "query"
+          },
+          {
+            "allFormat": "glob",
+            "current": {},
+            "datasource": "${DS_GRAPHITE}",
+            "hide": 0,
+            "includeAll": true,
+            "multi": false,
+            "multiFormat": "glob",
+            "name": "cpu",
+            "options": [],
+            "query": "snap.$environment.$server.intel.procfs.cpu.*",
+            "refresh": 1,
+            "refresh_on_load": false,
+            "regex": "",
+            "type": "query"
+          }
+        ]
+      },
+      "annotations": {
+        "list": []
+      },
+      "refresh": false,
+      "schemaVersion": 13,
+      "version": 8,
+      "links": [],
+      "gnetId": 470,
+      "description": "Summary metrics of Kubernetes Nodes"
+    }

@@ -1,0 +1,2729 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_WARP_10 PRESCIENCE",
+      "label": "Warp 10 Prescience",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "grafana-warp10-datasource",
+      "pluginName": "Warp10"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "4.6.3"
+    },
+    {
+      "type": "datasource",
+      "id": "grafana-warp10-datasource",
+      "name": "Warp10",
+      "version": "2.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "limit": 100,
+        "name": "Annotations & Alerts",
+        "showIn": 0,
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Monitor Kubernetes Nodes with noderig",
+  "editable": true,
+  "gnetId": 9876,
+  "graphTooltip": 0,
+  "hideControls": false,
+  "id": null,
+  "links": [],
+  "refresh": "10s",
+  "rows": [
+    {
+      "collapse": false,
+      "height": 342,
+      "panels": [
+        {
+          "columns": [],
+          "datasource": "${DS_WARP_10 PRESCIENCE}",
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "id": 1,
+          "links": [],
+          "pageSize": null,
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 1,
+            "desc": false
+          },
+          "span": 12,
+          "styles": [
+            {
+              "alias": "Time",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "hidden"
+            },
+            {
+              "alias": "Uptime",
+              "colorMode": "row",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "mappingType": 1,
+              "pattern": "A",
+              "thresholds": [
+                "90000",
+                "450000"
+              ],
+              "type": "number",
+              "unit": "s"
+            },
+            {
+              "alias": "",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "pattern": "B",
+              "thresholds": [],
+              "type": "hidden",
+              "unit": "short"
+            },
+            {
+              "alias": "",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            }
+          ],
+          "targets": [
+            {
+              "advancedMode": true,
+              "expr": "$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n'transformToGrafanaTable@1.0.0' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n[ \n  $token \n  'os.uptime' \n  { 'host' $nodes }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n\n[ SWAP bucketizer.last $end $BUCKET_SIZE 1 ] BUCKETIZE\n\nSORT\n\n<%\n  DROP\n  DUP LABELS 'host' GET 'node' STORE\n  { 'node' $node } RELABEL\n%> LMAP \n\n[ 'node' ] 'A' @transformToGrafanaTable",
+              "friendlyQuery": {
+                "readToken": "",
+                "className": "",
+                "labels": {},
+                "bucketizer": null,
+                "bucketCount": 50,
+                "reducer": null,
+                "reducerLabels": [],
+                "filter": null,
+                "filterLabels": [],
+                "filterParamNumber": 0,
+                "filterParamMap": {},
+                "filterParamClass": "",
+                "bucketizers": [
+                  "sum",
+                  "max",
+                  "min",
+                  "mean",
+                  "mean.circular",
+                  "bucketizer.mean.circular.exclude-nulls",
+                  "first",
+                  "last",
+                  "join",
+                  "median",
+                  "count",
+                  "and",
+                  "or"
+                ],
+                "reducers": [
+                  "argmax",
+                  "argmin",
+                  "count",
+                  "count.exclude-nulls",
+                  "count.include-nulls",
+                  "join",
+                  "join.forbid-nulls",
+                  "max",
+                  "max.forbid-nulls",
+                  "mean",
+                  "mean.exclude-nulls",
+                  "mean.circular",
+                  "mean.circular.exclude-nulls",
+                  "median",
+                  "min",
+                  "min.forbid-nulls",
+                  "and",
+                  "and.exclude-nulls",
+                  "or",
+                  "or.exclude-nulls",
+                  "sd",
+                  "shannonentropy.0",
+                  "shannonentropy.1",
+                  "sum",
+                  "sum.forbid-nulls",
+                  "var"
+                ],
+                "filters": [
+                  {
+                    "name": "byclass",
+                    "type": "S"
+                  },
+                  {
+                    "name": "bylabels",
+                    "type": "M"
+                  },
+                  {
+                    "name": "last.eq",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ne",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.gt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ge",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.lt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.le",
+                    "type": "N"
+                  }
+                ]
+              },
+              "hide": false,
+              "hideAttributes": true,
+              "hideLabels": true,
+              "refId": "A",
+              "ws": "1552276358129000 'start' STORE '2019-03-11T03:52:38.129Z' 'startISO' STORE 1552297958129000 'end' STORE '2019-03-11T09:52:38.129Z' 'endISO' STORE 21600000000 'interval' STORE 11297071 '__interval' STORE 11297 '__interval_ms' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' '$token' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' 'token' STORE '~.*' 'nodes' STORE \n$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n'transformToGrafanaTable@1.0.0' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n[ \n  $token \n  'os.uptime' \n  { 'host' $nodes }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n\n[ SWAP bucketizer.last $end $BUCKET_SIZE 1 ] BUCKETIZE\n\nSORT\n\n<%\n  DROP\n  DUP LABELS 'host' GET 'node' STORE\n  { 'node' $node } RELABEL\n%> LMAP \n\n[ 'node' ] 'A' @transformToGrafanaTable"
+            }
+          ],
+          "title": "Uptime",
+          "transform": "table",
+          "type": "table"
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 335,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_WARP_10 PRESCIENCE}",
+          "fill": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 8
+          },
+          "id": 2,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "advancedMode": true,
+              "expr": "$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n[ \n  $token \n  'os.mem' \n  { 'host' $nodes }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n\n[ SWAP bucketizer.mean $end $BUCKET_SIZE $BUCKET_COUNT 2 + ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT",
+              "friendlyQuery": {
+                "readToken": "",
+                "className": "sd.rack.v2.",
+                "labels": {},
+                "bucketizer": null,
+                "bucketCount": 50,
+                "reducer": null,
+                "reducerLabels": [],
+                "filter": null,
+                "filterLabels": [],
+                "filterParamNumber": 0,
+                "filterParamMap": {},
+                "filterParamClass": "",
+                "bucketizers": [
+                  "sum",
+                  "max",
+                  "min",
+                  "mean",
+                  "mean.circular",
+                  "bucketizer.mean.circular.exclude-nulls",
+                  "first",
+                  "last",
+                  "join",
+                  "median",
+                  "count",
+                  "and",
+                  "or"
+                ],
+                "reducers": [
+                  "argmax",
+                  "argmin",
+                  "count",
+                  "count.exclude-nulls",
+                  "count.include-nulls",
+                  "join",
+                  "join.forbid-nulls",
+                  "max",
+                  "max.forbid-nulls",
+                  "mean",
+                  "mean.exclude-nulls",
+                  "mean.circular",
+                  "mean.circular.exclude-nulls",
+                  "median",
+                  "min",
+                  "min.forbid-nulls",
+                  "and",
+                  "and.exclude-nulls",
+                  "or",
+                  "or.exclude-nulls",
+                  "sd",
+                  "shannonentropy.0",
+                  "shannonentropy.1",
+                  "sum",
+                  "sum.forbid-nulls",
+                  "var"
+                ],
+                "filters": [
+                  {
+                    "name": "byclass",
+                    "type": "S"
+                  },
+                  {
+                    "name": "bylabels",
+                    "type": "M"
+                  },
+                  {
+                    "name": "last.eq",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ne",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.gt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ge",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.lt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.le",
+                    "type": "N"
+                  }
+                ]
+              },
+              "hide": false,
+              "hideAttributes": true,
+              "hideLabels": true,
+              "refId": "A",
+              "ws": "1552276358129000 'start' STORE '2019-03-11T03:52:38.129Z' 'startISO' STORE 1552297958129000 'end' STORE '2019-03-11T09:52:38.129Z' 'endISO' STORE 21600000000 'interval' STORE 22594142 '__interval' STORE 22594 '__interval_ms' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' '$token' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' 'token' STORE '~.*' 'nodes' STORE \n$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n[ \n  $token \n  'os.mem' \n  { 'host' $nodes }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n\n[ SWAP bucketizer.mean $end $BUCKET_SIZE $BUCKET_COUNT 2 + ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory usage",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "label": null,
+              "logBase": 1,
+              "max": "100",
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_WARP_10 PRESCIENCE}",
+          "fill": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 8
+          },
+          "id": 3,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "advancedMode": true,
+              "expr": "$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n[ \n  $token \n  'os.cpu' \n  { 'host' $nodes }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n[ SWAP 0.0 mapper.gt 0 0 0 ] MAP NONEMPTY\n[ SWAP bucketizer.mean $end $BUCKET_SIZE $BUCKET_COUNT 2 + ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\nSORT",
+              "friendlyQuery": {
+                "readToken": "",
+                "className": "sd.rack.v2.",
+                "labels": {},
+                "bucketizer": null,
+                "bucketCount": 50,
+                "reducer": null,
+                "reducerLabels": [],
+                "filter": null,
+                "filterLabels": [],
+                "filterParamNumber": 0,
+                "filterParamMap": {},
+                "filterParamClass": "",
+                "bucketizers": [
+                  "sum",
+                  "max",
+                  "min",
+                  "mean",
+                  "mean.circular",
+                  "bucketizer.mean.circular.exclude-nulls",
+                  "first",
+                  "last",
+                  "join",
+                  "median",
+                  "count",
+                  "and",
+                  "or"
+                ],
+                "reducers": [
+                  "argmax",
+                  "argmin",
+                  "count",
+                  "count.exclude-nulls",
+                  "count.include-nulls",
+                  "join",
+                  "join.forbid-nulls",
+                  "max",
+                  "max.forbid-nulls",
+                  "mean",
+                  "mean.exclude-nulls",
+                  "mean.circular",
+                  "mean.circular.exclude-nulls",
+                  "median",
+                  "min",
+                  "min.forbid-nulls",
+                  "and",
+                  "and.exclude-nulls",
+                  "or",
+                  "or.exclude-nulls",
+                  "sd",
+                  "shannonentropy.0",
+                  "shannonentropy.1",
+                  "sum",
+                  "sum.forbid-nulls",
+                  "var"
+                ],
+                "filters": [
+                  {
+                    "name": "byclass",
+                    "type": "S"
+                  },
+                  {
+                    "name": "bylabels",
+                    "type": "M"
+                  },
+                  {
+                    "name": "last.eq",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ne",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.gt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ge",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.lt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.le",
+                    "type": "N"
+                  }
+                ]
+              },
+              "hide": false,
+              "hideAttributes": true,
+              "hideLabels": true,
+              "refId": "A",
+              "ws": "1552276358129000 'start' STORE '2019-03-11T03:52:38.129Z' 'startISO' STORE 1552297958129000 'end' STORE '2019-03-11T09:52:38.129Z' 'endISO' STORE 21600000000 'interval' STORE 22594142 '__interval' STORE 22594 '__interval_ms' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' '$token' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' 'token' STORE '~.*' 'nodes' STORE \n$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n[ \n  $token \n  'os.cpu' \n  { 'host' $nodes }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n[ SWAP 0.0 mapper.gt 0 0 0 ] MAP NONEMPTY\n[ SWAP bucketizer.mean $end $BUCKET_SIZE $BUCKET_COUNT 2 + ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\nSORT"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "CPU Usage",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "label": null,
+              "logBase": 1,
+              "max": "100",
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 329,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_WARP_10 PRESCIENCE}",
+          "fill": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 16
+          },
+          "id": 4,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "advancedMode": true,
+              "expr": "$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n\n[ \n  $token \n  'os.disk.fs' \n  { 'host' $nodes }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n\n[ SWAP bucketizer.mean $end $BUCKET_SIZE $BUCKET_COUNT 2 + ] BUCKETIZE\n\n\n[ 'host' ] '' @renameWithMultipleLabelValues\nSORT",
+              "friendlyQuery": {
+                "readToken": "",
+                "className": "sd.rack.v2.",
+                "labels": {},
+                "bucketizer": null,
+                "bucketCount": 50,
+                "reducer": null,
+                "reducerLabels": [],
+                "filter": null,
+                "filterLabels": [],
+                "filterParamNumber": 0,
+                "filterParamMap": {},
+                "filterParamClass": "",
+                "bucketizers": [
+                  "sum",
+                  "max",
+                  "min",
+                  "mean",
+                  "mean.circular",
+                  "bucketizer.mean.circular.exclude-nulls",
+                  "first",
+                  "last",
+                  "join",
+                  "median",
+                  "count",
+                  "and",
+                  "or"
+                ],
+                "reducers": [
+                  "argmax",
+                  "argmin",
+                  "count",
+                  "count.exclude-nulls",
+                  "count.include-nulls",
+                  "join",
+                  "join.forbid-nulls",
+                  "max",
+                  "max.forbid-nulls",
+                  "mean",
+                  "mean.exclude-nulls",
+                  "mean.circular",
+                  "mean.circular.exclude-nulls",
+                  "median",
+                  "min",
+                  "min.forbid-nulls",
+                  "and",
+                  "and.exclude-nulls",
+                  "or",
+                  "or.exclude-nulls",
+                  "sd",
+                  "shannonentropy.0",
+                  "shannonentropy.1",
+                  "sum",
+                  "sum.forbid-nulls",
+                  "var"
+                ],
+                "filters": [
+                  {
+                    "name": "byclass",
+                    "type": "S"
+                  },
+                  {
+                    "name": "bylabels",
+                    "type": "M"
+                  },
+                  {
+                    "name": "last.eq",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ne",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.gt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ge",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.lt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.le",
+                    "type": "N"
+                  }
+                ]
+              },
+              "hide": false,
+              "hideAttributes": true,
+              "hideLabels": true,
+              "refId": "A",
+              "ws": "1552276358129000 'start' STORE '2019-03-11T03:52:38.129Z' 'startISO' STORE 1552297958129000 'end' STORE '2019-03-11T09:52:38.129Z' 'endISO' STORE 21600000000 'interval' STORE 22594142 '__interval' STORE 22594 '__interval_ms' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' '$token' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' 'token' STORE '~.*' 'nodes' STORE \n$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n\n[ \n  $token \n  'os.disk.fs' \n  { 'host' $nodes }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n\n[ SWAP bucketizer.mean $end $BUCKET_SIZE $BUCKET_COUNT 2 + ] BUCKETIZE\n\n\n[ 'host' ] '' @renameWithMultipleLabelValues\nSORT"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Disk Usage",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "label": null,
+              "logBase": 1,
+              "max": "100",
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_WARP_10 PRESCIENCE}",
+          "fill": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 16
+          },
+          "id": 5,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "sort": null,
+            "sortDesc": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/^forecast.*/",
+              "color": "#eab839"
+            },
+            {
+              "alias": "/^temperature.*/",
+              "color": "#629e51"
+            },
+            {
+              "alias": "/^warn.*/",
+              "color": "#ef843c"
+            },
+            {
+              "alias": "/^crit.*/",
+              "color": "#bf1b00"
+            }
+          ],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "advancedMode": true,
+              "expr": "$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n\n[ \n  $token \n  'os.load1' \n  { 'host' $nodes }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n\n[ SWAP bucketizer.mean $end $BUCKET_SIZE $BUCKET_COUNT 2 + ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT",
+              "friendlyQuery": {
+                "readToken": "",
+                "className": "sd.rack.v2.",
+                "labels": {},
+                "bucketizer": null,
+                "bucketCount": 50,
+                "reducer": null,
+                "reducerLabels": [],
+                "filter": null,
+                "filterLabels": [],
+                "filterParamNumber": 0,
+                "filterParamMap": {},
+                "filterParamClass": "",
+                "bucketizers": [
+                  "sum",
+                  "max",
+                  "min",
+                  "mean",
+                  "mean.circular",
+                  "bucketizer.mean.circular.exclude-nulls",
+                  "first",
+                  "last",
+                  "join",
+                  "median",
+                  "count",
+                  "and",
+                  "or"
+                ],
+                "reducers": [
+                  "argmax",
+                  "argmin",
+                  "count",
+                  "count.exclude-nulls",
+                  "count.include-nulls",
+                  "join",
+                  "join.forbid-nulls",
+                  "max",
+                  "max.forbid-nulls",
+                  "mean",
+                  "mean.exclude-nulls",
+                  "mean.circular",
+                  "mean.circular.exclude-nulls",
+                  "median",
+                  "min",
+                  "min.forbid-nulls",
+                  "and",
+                  "and.exclude-nulls",
+                  "or",
+                  "or.exclude-nulls",
+                  "sd",
+                  "shannonentropy.0",
+                  "shannonentropy.1",
+                  "sum",
+                  "sum.forbid-nulls",
+                  "var"
+                ],
+                "filters": [
+                  {
+                    "name": "byclass",
+                    "type": "S"
+                  },
+                  {
+                    "name": "bylabels",
+                    "type": "M"
+                  },
+                  {
+                    "name": "last.eq",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ne",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.gt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ge",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.lt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.le",
+                    "type": "N"
+                  }
+                ]
+              },
+              "hide": false,
+              "hideAttributes": true,
+              "hideLabels": true,
+              "refId": "A",
+              "ws": "1552276358129000 'start' STORE '2019-03-11T03:52:38.129Z' 'startISO' STORE 1552297958129000 'end' STORE '2019-03-11T09:52:38.129Z' 'endISO' STORE 21600000000 'interval' STORE 22594142 '__interval' STORE 22594 '__interval_ms' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' '$token' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' 'token' STORE '~.*' 'nodes' STORE \n$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n\n[ \n  $token \n  'os.load1' \n  { 'host' $nodes }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n\n[ SWAP bucketizer.mean $end $BUCKET_SIZE $BUCKET_COUNT 2 + ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "OS Load",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": "16",
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 303,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_WARP_10 PRESCIENCE}",
+          "fill": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 24
+          },
+          "id": 6,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "sort": null,
+            "sortDesc": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/^forecast.*/",
+              "color": "#eab839"
+            },
+            {
+              "alias": "/^temperature.*/",
+              "color": "#629e51"
+            },
+            {
+              "alias": "/^warn.*/",
+              "color": "#ef843c"
+            },
+            {
+              "alias": "/^crit.*/",
+              "color": "#bf1b00"
+            }
+          ],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "advancedMode": true,
+              "expr": "$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE '$node' STORE\n\n[ \n  $token \n  'os.net.dropped' \n  { 'host' $nodes 'direction' 'in' 'iface' '~(ens|eth).+' }\n  $end $interval\n]\nFETCH \n[ SWAP mapper.delta 1 0 0 ] MAP\n[ SWAP bucketizer.sum $end $BUCKET_SIZE $BUCKET_COUNT ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT",
+              "friendlyQuery": {
+                "readToken": "",
+                "className": "sd.rack.v2.",
+                "labels": {},
+                "bucketizer": null,
+                "bucketCount": 50,
+                "reducer": null,
+                "reducerLabels": [],
+                "filter": null,
+                "filterLabels": [],
+                "filterParamNumber": 0,
+                "filterParamMap": {},
+                "filterParamClass": "",
+                "bucketizers": [
+                  "sum",
+                  "max",
+                  "min",
+                  "mean",
+                  "mean.circular",
+                  "bucketizer.mean.circular.exclude-nulls",
+                  "first",
+                  "last",
+                  "join",
+                  "median",
+                  "count",
+                  "and",
+                  "or"
+                ],
+                "reducers": [
+                  "argmax",
+                  "argmin",
+                  "count",
+                  "count.exclude-nulls",
+                  "count.include-nulls",
+                  "join",
+                  "join.forbid-nulls",
+                  "max",
+                  "max.forbid-nulls",
+                  "mean",
+                  "mean.exclude-nulls",
+                  "mean.circular",
+                  "mean.circular.exclude-nulls",
+                  "median",
+                  "min",
+                  "min.forbid-nulls",
+                  "and",
+                  "and.exclude-nulls",
+                  "or",
+                  "or.exclude-nulls",
+                  "sd",
+                  "shannonentropy.0",
+                  "shannonentropy.1",
+                  "sum",
+                  "sum.forbid-nulls",
+                  "var"
+                ],
+                "filters": [
+                  {
+                    "name": "byclass",
+                    "type": "S"
+                  },
+                  {
+                    "name": "bylabels",
+                    "type": "M"
+                  },
+                  {
+                    "name": "last.eq",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ne",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.gt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ge",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.lt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.le",
+                    "type": "N"
+                  }
+                ]
+              },
+              "hide": false,
+              "hideAttributes": true,
+              "hideLabels": true,
+              "refId": "A",
+              "ws": "1552276358129000 'start' STORE '2019-03-11T03:52:38.129Z' 'startISO' STORE 1552297958129000 'end' STORE '2019-03-11T09:52:38.129Z' 'endISO' STORE 21600000000 'interval' STORE 22594142 '__interval' STORE 22594 '__interval_ms' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' '$token' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' 'token' STORE '~.*' 'nodes' STORE \n$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE '$node' STORE\n\n[ \n  $token \n  'os.net.dropped' \n  { 'host' $nodes 'direction' 'in' 'iface' '~(ens|eth).+' }\n  $end $interval\n]\nFETCH \n[ SWAP mapper.delta 1 0 0 ] MAP\n[ SWAP bucketizer.sum $end $BUCKET_SIZE $BUCKET_COUNT ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Network Input Drops",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_WARP_10 PRESCIENCE}",
+          "fill": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 24
+          },
+          "id": 7,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "sort": null,
+            "sortDesc": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/^forecast.*/",
+              "color": "#eab839"
+            },
+            {
+              "alias": "/^temperature.*/",
+              "color": "#629e51"
+            },
+            {
+              "alias": "/^warn.*/",
+              "color": "#ef843c"
+            },
+            {
+              "alias": "/^crit.*/",
+              "color": "#bf1b00"
+            }
+          ],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "advancedMode": true,
+              "expr": "$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE '$node' STORE\n\n[ \n  $token \n  'os.net.dropped' \n  { 'host' $nodes 'direction' 'out' 'iface' '~(ens|eth).+' }\n  $end $interval\n]\nFETCH \n[ SWAP mapper.delta 1 0 0 ] MAP\n[ SWAP bucketizer.sum $end $BUCKET_SIZE $BUCKET_COUNT ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT",
+              "friendlyQuery": {
+                "readToken": "",
+                "className": "sd.rack.v2.",
+                "labels": {},
+                "bucketizer": null,
+                "bucketCount": 50,
+                "reducer": null,
+                "reducerLabels": [],
+                "filter": null,
+                "filterLabels": [],
+                "filterParamNumber": 0,
+                "filterParamMap": {},
+                "filterParamClass": "",
+                "bucketizers": [
+                  "sum",
+                  "max",
+                  "min",
+                  "mean",
+                  "mean.circular",
+                  "bucketizer.mean.circular.exclude-nulls",
+                  "first",
+                  "last",
+                  "join",
+                  "median",
+                  "count",
+                  "and",
+                  "or"
+                ],
+                "reducers": [
+                  "argmax",
+                  "argmin",
+                  "count",
+                  "count.exclude-nulls",
+                  "count.include-nulls",
+                  "join",
+                  "join.forbid-nulls",
+                  "max",
+                  "max.forbid-nulls",
+                  "mean",
+                  "mean.exclude-nulls",
+                  "mean.circular",
+                  "mean.circular.exclude-nulls",
+                  "median",
+                  "min",
+                  "min.forbid-nulls",
+                  "and",
+                  "and.exclude-nulls",
+                  "or",
+                  "or.exclude-nulls",
+                  "sd",
+                  "shannonentropy.0",
+                  "shannonentropy.1",
+                  "sum",
+                  "sum.forbid-nulls",
+                  "var"
+                ],
+                "filters": [
+                  {
+                    "name": "byclass",
+                    "type": "S"
+                  },
+                  {
+                    "name": "bylabels",
+                    "type": "M"
+                  },
+                  {
+                    "name": "last.eq",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ne",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.gt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ge",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.lt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.le",
+                    "type": "N"
+                  }
+                ]
+              },
+              "hide": false,
+              "hideAttributes": true,
+              "hideLabels": true,
+              "refId": "A",
+              "ws": "1552276358129000 'start' STORE '2019-03-11T03:52:38.129Z' 'startISO' STORE 1552297958129000 'end' STORE '2019-03-11T09:52:38.129Z' 'endISO' STORE 21600000000 'interval' STORE 22594142 '__interval' STORE 22594 '__interval_ms' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' '$token' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' 'token' STORE '~.*' 'nodes' STORE \n$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE '$node' STORE\n\n[ \n  $token \n  'os.net.dropped' \n  { 'host' $nodes 'direction' 'out' 'iface' '~(ens|eth).+' }\n  $end $interval\n]\nFETCH \n[ SWAP mapper.delta 1 0 0 ] MAP\n[ SWAP bucketizer.sum $end $BUCKET_SIZE $BUCKET_COUNT ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Network Ouput Drops",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 270,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_WARP_10 PRESCIENCE}",
+          "fill": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 32
+          },
+          "id": 8,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "sort": null,
+            "sortDesc": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/^forecast.*/",
+              "color": "#eab839"
+            },
+            {
+              "alias": "/^temperature.*/",
+              "color": "#629e51"
+            },
+            {
+              "alias": "/^warn.*/",
+              "color": "#ef843c"
+            },
+            {
+              "alias": "/^crit.*/",
+              "color": "#bf1b00"
+            }
+          ],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "advancedMode": true,
+              "expr": "$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n\n[ \n  $token \n  'os.net.errs' \n  { 'host' $nodes 'direction' 'in' 'iface' '~(ens|eth).+' }\n  $end $interval\n]\nFETCH \n\n[ SWAP mapper.delta 1 0 0 ] MAP\n[ SWAP bucketizer.last $end $BUCKET_SIZE $BUCKET_COUNT ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT",
+              "friendlyQuery": {
+                "readToken": "",
+                "className": "sd.rack.v2.",
+                "labels": {},
+                "bucketizer": null,
+                "bucketCount": 50,
+                "reducer": null,
+                "reducerLabels": [],
+                "filter": null,
+                "filterLabels": [],
+                "filterParamNumber": 0,
+                "filterParamMap": {},
+                "filterParamClass": "",
+                "bucketizers": [
+                  "sum",
+                  "max",
+                  "min",
+                  "mean",
+                  "mean.circular",
+                  "bucketizer.mean.circular.exclude-nulls",
+                  "first",
+                  "last",
+                  "join",
+                  "median",
+                  "count",
+                  "and",
+                  "or"
+                ],
+                "reducers": [
+                  "argmax",
+                  "argmin",
+                  "count",
+                  "count.exclude-nulls",
+                  "count.include-nulls",
+                  "join",
+                  "join.forbid-nulls",
+                  "max",
+                  "max.forbid-nulls",
+                  "mean",
+                  "mean.exclude-nulls",
+                  "mean.circular",
+                  "mean.circular.exclude-nulls",
+                  "median",
+                  "min",
+                  "min.forbid-nulls",
+                  "and",
+                  "and.exclude-nulls",
+                  "or",
+                  "or.exclude-nulls",
+                  "sd",
+                  "shannonentropy.0",
+                  "shannonentropy.1",
+                  "sum",
+                  "sum.forbid-nulls",
+                  "var"
+                ],
+                "filters": [
+                  {
+                    "name": "byclass",
+                    "type": "S"
+                  },
+                  {
+                    "name": "bylabels",
+                    "type": "M"
+                  },
+                  {
+                    "name": "last.eq",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ne",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.gt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ge",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.lt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.le",
+                    "type": "N"
+                  }
+                ]
+              },
+              "hide": false,
+              "hideAttributes": true,
+              "hideLabels": true,
+              "refId": "A",
+              "ws": "1552276358129000 'start' STORE '2019-03-11T03:52:38.129Z' 'startISO' STORE 1552297958129000 'end' STORE '2019-03-11T09:52:38.129Z' 'endISO' STORE 21600000000 'interval' STORE 22594142 '__interval' STORE 22594 '__interval_ms' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' '$token' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' 'token' STORE '~.*' 'nodes' STORE \n$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n\n[ \n  $token \n  'os.net.errs' \n  { 'host' $nodes 'direction' 'in' 'iface' '~(ens|eth).+' }\n  $end $interval\n]\nFETCH \n\n[ SWAP mapper.delta 1 0 0 ] MAP\n[ SWAP bucketizer.last $end $BUCKET_SIZE $BUCKET_COUNT ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Network Input Errors",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_WARP_10 PRESCIENCE}",
+          "fill": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 32
+          },
+          "id": 9,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "sort": null,
+            "sortDesc": null,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/^forecast.*/",
+              "color": "#eab839"
+            },
+            {
+              "alias": "/^temperature.*/",
+              "color": "#629e51"
+            },
+            {
+              "alias": "/^warn.*/",
+              "color": "#ef843c"
+            },
+            {
+              "alias": "/^crit.*/",
+              "color": "#bf1b00"
+            }
+          ],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "advancedMode": true,
+              "expr": "$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n\n[ \n  $token \n  'os.net.errs' \n  { 'host' $nodes 'direction' 'out' 'iface' '~(ens|eth).+' }\n  $end $interval\n]\nFETCH \n\n[ SWAP mapper.delta 1 0 0 ] MAP\n[ SWAP bucketizer.last $end $BUCKET_SIZE $BUCKET_COUNT ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT",
+              "friendlyQuery": {
+                "readToken": "",
+                "className": "sd.rack.v2.",
+                "labels": {},
+                "bucketizer": null,
+                "bucketCount": 50,
+                "reducer": null,
+                "reducerLabels": [],
+                "filter": null,
+                "filterLabels": [],
+                "filterParamNumber": 0,
+                "filterParamMap": {},
+                "filterParamClass": "",
+                "bucketizers": [
+                  "sum",
+                  "max",
+                  "min",
+                  "mean",
+                  "mean.circular",
+                  "bucketizer.mean.circular.exclude-nulls",
+                  "first",
+                  "last",
+                  "join",
+                  "median",
+                  "count",
+                  "and",
+                  "or"
+                ],
+                "reducers": [
+                  "argmax",
+                  "argmin",
+                  "count",
+                  "count.exclude-nulls",
+                  "count.include-nulls",
+                  "join",
+                  "join.forbid-nulls",
+                  "max",
+                  "max.forbid-nulls",
+                  "mean",
+                  "mean.exclude-nulls",
+                  "mean.circular",
+                  "mean.circular.exclude-nulls",
+                  "median",
+                  "min",
+                  "min.forbid-nulls",
+                  "and",
+                  "and.exclude-nulls",
+                  "or",
+                  "or.exclude-nulls",
+                  "sd",
+                  "shannonentropy.0",
+                  "shannonentropy.1",
+                  "sum",
+                  "sum.forbid-nulls",
+                  "var"
+                ],
+                "filters": [
+                  {
+                    "name": "byclass",
+                    "type": "S"
+                  },
+                  {
+                    "name": "bylabels",
+                    "type": "M"
+                  },
+                  {
+                    "name": "last.eq",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ne",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.gt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ge",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.lt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.le",
+                    "type": "N"
+                  }
+                ]
+              },
+              "hide": false,
+              "hideAttributes": true,
+              "hideLabels": true,
+              "refId": "A",
+              "ws": "1552276358129000 'start' STORE '2019-03-11T03:52:38.129Z' 'startISO' STORE 1552297958129000 'end' STORE '2019-03-11T09:52:38.129Z' 'endISO' STORE 21600000000 'interval' STORE 22594142 '__interval' STORE 22594 '__interval_ms' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' '$token' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' 'token' STORE '~.*' 'nodes' STORE \n$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n\n[ \n  $token \n  'os.net.errs' \n  { 'host' $nodes 'direction' 'out' 'iface' '~(ens|eth).+' }\n  $end $interval\n]\nFETCH \n\n[ SWAP mapper.delta 1 0 0 ] MAP\n[ SWAP bucketizer.last $end $BUCKET_SIZE $BUCKET_COUNT ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Network Output Errors",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 295,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_WARP_10 PRESCIENCE}",
+          "fill": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 40
+          },
+          "id": 10,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "sort": "total",
+            "sortDesc": true,
+            "total": true,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/^forecast.*/",
+              "color": "#eab839"
+            },
+            {
+              "alias": "/^temperature.*/",
+              "color": "#629e51"
+            },
+            {
+              "alias": "/^warn.*/",
+              "color": "#ef843c"
+            },
+            {
+              "alias": "/^crit.*/",
+              "color": "#bf1b00"
+            }
+          ],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "advancedMode": true,
+              "expr": "$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n[ \n  $token \n  'os.net.packets' \n  { 'host' $nodes 'direction' 'in' 'iface' '~(ens|eth).+' }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n[ SWAP mapper.delta 1 0 0 ] MAP\n[ SWAP bucketizer.last $end $BUCKET_SIZE $BUCKET_COUNT 2 + ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT",
+              "friendlyQuery": {
+                "readToken": "",
+                "className": "sd.rack.v2.",
+                "labels": {},
+                "bucketizer": null,
+                "bucketCount": 50,
+                "reducer": null,
+                "reducerLabels": [],
+                "filter": null,
+                "filterLabels": [],
+                "filterParamNumber": 0,
+                "filterParamMap": {},
+                "filterParamClass": "",
+                "bucketizers": [
+                  "sum",
+                  "max",
+                  "min",
+                  "mean",
+                  "mean.circular",
+                  "bucketizer.mean.circular.exclude-nulls",
+                  "first",
+                  "last",
+                  "join",
+                  "median",
+                  "count",
+                  "and",
+                  "or"
+                ],
+                "reducers": [
+                  "argmax",
+                  "argmin",
+                  "count",
+                  "count.exclude-nulls",
+                  "count.include-nulls",
+                  "join",
+                  "join.forbid-nulls",
+                  "max",
+                  "max.forbid-nulls",
+                  "mean",
+                  "mean.exclude-nulls",
+                  "mean.circular",
+                  "mean.circular.exclude-nulls",
+                  "median",
+                  "min",
+                  "min.forbid-nulls",
+                  "and",
+                  "and.exclude-nulls",
+                  "or",
+                  "or.exclude-nulls",
+                  "sd",
+                  "shannonentropy.0",
+                  "shannonentropy.1",
+                  "sum",
+                  "sum.forbid-nulls",
+                  "var"
+                ],
+                "filters": [
+                  {
+                    "name": "byclass",
+                    "type": "S"
+                  },
+                  {
+                    "name": "bylabels",
+                    "type": "M"
+                  },
+                  {
+                    "name": "last.eq",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ne",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.gt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ge",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.lt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.le",
+                    "type": "N"
+                  }
+                ]
+              },
+              "hide": false,
+              "hideAttributes": true,
+              "hideLabels": true,
+              "refId": "A",
+              "ws": "1552276358129000 'start' STORE '2019-03-11T03:52:38.129Z' 'startISO' STORE 1552297958129000 'end' STORE '2019-03-11T09:52:38.129Z' 'endISO' STORE 21600000000 'interval' STORE 22594142 '__interval' STORE 22594 '__interval_ms' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' '$token' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' 'token' STORE '~.*' 'nodes' STORE \n$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n[ \n  $token \n  'os.net.packets' \n  { 'host' $nodes 'direction' 'in' 'iface' '~(ens|eth).+' }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n[ SWAP mapper.delta 1 0 0 ] MAP\n[ SWAP bucketizer.last $end $BUCKET_SIZE $BUCKET_COUNT 2 + ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Network Input Packets",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_WARP_10 PRESCIENCE}",
+          "fill": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 40
+          },
+          "id": 11,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "sort": "total",
+            "sortDesc": true,
+            "total": true,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/^forecast.*/",
+              "color": "#eab839"
+            },
+            {
+              "alias": "/^temperature.*/",
+              "color": "#629e51"
+            },
+            {
+              "alias": "/^warn.*/",
+              "color": "#ef843c"
+            },
+            {
+              "alias": "/^crit.*/",
+              "color": "#bf1b00"
+            }
+          ],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "advancedMode": true,
+              "expr": "$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n[ \n  $token \n  'os.net.packets' \n  { 'host' $nodes 'direction' 'out' 'iface' '~(ens|eth).+' }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n[ SWAP mapper.delta 1 0 0 ] MAP\n[ SWAP bucketizer.last $end $BUCKET_SIZE $BUCKET_COUNT 2 + ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT",
+              "friendlyQuery": {
+                "readToken": "",
+                "className": "sd.rack.v2.",
+                "labels": {},
+                "bucketizer": null,
+                "bucketCount": 50,
+                "reducer": null,
+                "reducerLabels": [],
+                "filter": null,
+                "filterLabels": [],
+                "filterParamNumber": 0,
+                "filterParamMap": {},
+                "filterParamClass": "",
+                "bucketizers": [
+                  "sum",
+                  "max",
+                  "min",
+                  "mean",
+                  "mean.circular",
+                  "bucketizer.mean.circular.exclude-nulls",
+                  "first",
+                  "last",
+                  "join",
+                  "median",
+                  "count",
+                  "and",
+                  "or"
+                ],
+                "reducers": [
+                  "argmax",
+                  "argmin",
+                  "count",
+                  "count.exclude-nulls",
+                  "count.include-nulls",
+                  "join",
+                  "join.forbid-nulls",
+                  "max",
+                  "max.forbid-nulls",
+                  "mean",
+                  "mean.exclude-nulls",
+                  "mean.circular",
+                  "mean.circular.exclude-nulls",
+                  "median",
+                  "min",
+                  "min.forbid-nulls",
+                  "and",
+                  "and.exclude-nulls",
+                  "or",
+                  "or.exclude-nulls",
+                  "sd",
+                  "shannonentropy.0",
+                  "shannonentropy.1",
+                  "sum",
+                  "sum.forbid-nulls",
+                  "var"
+                ],
+                "filters": [
+                  {
+                    "name": "byclass",
+                    "type": "S"
+                  },
+                  {
+                    "name": "bylabels",
+                    "type": "M"
+                  },
+                  {
+                    "name": "last.eq",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ne",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.gt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ge",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.lt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.le",
+                    "type": "N"
+                  }
+                ]
+              },
+              "hide": false,
+              "hideAttributes": true,
+              "hideLabels": true,
+              "refId": "A",
+              "ws": "1552276358129000 'start' STORE '2019-03-11T03:52:38.129Z' 'startISO' STORE 1552297958129000 'end' STORE '2019-03-11T09:52:38.129Z' 'endISO' STORE 21600000000 'interval' STORE 22594142 '__interval' STORE 22594 '__interval_ms' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' '$token' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' 'token' STORE '~.*' 'nodes' STORE \n$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n[ \n  $token \n  'os.net.packets' \n  { 'host' $nodes 'direction' 'out' 'iface' '~(ens|eth).+' }\n  $end $interval $BUCKET_SIZE 2 * +\n]\nFETCH \n[ SWAP mapper.delta 1 0 0 ] MAP\n[ SWAP bucketizer.last $end $BUCKET_SIZE $BUCKET_COUNT 2 + ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Network Output Packets",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 348,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_WARP_10 PRESCIENCE}",
+          "fill": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 48
+          },
+          "id": 12,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "sort": "total",
+            "sortDesc": true,
+            "total": true,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/^forecast.*/",
+              "color": "#eab839"
+            },
+            {
+              "alias": "/^temperature.*/",
+              "color": "#629e51"
+            },
+            {
+              "alias": "/^warn.*/",
+              "color": "#ef843c"
+            },
+            {
+              "alias": "/^crit.*/",
+              "color": "#bf1b00"
+            }
+          ],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "advancedMode": true,
+              "expr": "$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n\n[ \n  $token \n  'os.net.bytes' \n  { 'host' $nodes 'direction' 'in' 'iface' '~(ens|eth).+' }\n  $end $interval\n]\nFETCH \n[ SWAP mapper.delta 1 0 0 ] MAP\n\n[ SWAP bucketizer.last $end $BUCKET_SIZE $BUCKET_COUNT ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT",
+              "friendlyQuery": {
+                "readToken": "",
+                "className": "sd.rack.v2.",
+                "labels": {},
+                "bucketizer": null,
+                "bucketCount": 50,
+                "reducer": null,
+                "reducerLabels": [],
+                "filter": null,
+                "filterLabels": [],
+                "filterParamNumber": 0,
+                "filterParamMap": {},
+                "filterParamClass": "",
+                "bucketizers": [
+                  "sum",
+                  "max",
+                  "min",
+                  "mean",
+                  "mean.circular",
+                  "bucketizer.mean.circular.exclude-nulls",
+                  "first",
+                  "last",
+                  "join",
+                  "median",
+                  "count",
+                  "and",
+                  "or"
+                ],
+                "reducers": [
+                  "argmax",
+                  "argmin",
+                  "count",
+                  "count.exclude-nulls",
+                  "count.include-nulls",
+                  "join",
+                  "join.forbid-nulls",
+                  "max",
+                  "max.forbid-nulls",
+                  "mean",
+                  "mean.exclude-nulls",
+                  "mean.circular",
+                  "mean.circular.exclude-nulls",
+                  "median",
+                  "min",
+                  "min.forbid-nulls",
+                  "and",
+                  "and.exclude-nulls",
+                  "or",
+                  "or.exclude-nulls",
+                  "sd",
+                  "shannonentropy.0",
+                  "shannonentropy.1",
+                  "sum",
+                  "sum.forbid-nulls",
+                  "var"
+                ],
+                "filters": [
+                  {
+                    "name": "byclass",
+                    "type": "S"
+                  },
+                  {
+                    "name": "bylabels",
+                    "type": "M"
+                  },
+                  {
+                    "name": "last.eq",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ne",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.gt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ge",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.lt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.le",
+                    "type": "N"
+                  }
+                ]
+              },
+              "hide": false,
+              "hideAttributes": true,
+              "hideLabels": true,
+              "refId": "A",
+              "ws": "1552276358129000 'start' STORE '2019-03-11T03:52:38.129Z' 'startISO' STORE 1552297958129000 'end' STORE '2019-03-11T09:52:38.129Z' 'endISO' STORE 21600000000 'interval' STORE 22594142 '__interval' STORE 22594 '__interval_ms' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' '$token' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' 'token' STORE '~.*' 'nodes' STORE \n$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n\n[ \n  $token \n  'os.net.bytes' \n  { 'host' $nodes 'direction' 'in' 'iface' '~(ens|eth).+' }\n  $end $interval\n]\nFETCH \n[ SWAP mapper.delta 1 0 0 ] MAP\n\n[ SWAP bucketizer.last $end $BUCKET_SIZE $BUCKET_COUNT ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Network Input Data",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_WARP_10 PRESCIENCE}",
+          "fill": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 48
+          },
+          "id": 13,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "sort": "total",
+            "sortDesc": true,
+            "total": true,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/^forecast.*/",
+              "color": "#eab839"
+            },
+            {
+              "alias": "/^temperature.*/",
+              "color": "#629e51"
+            },
+            {
+              "alias": "/^warn.*/",
+              "color": "#ef843c"
+            },
+            {
+              "alias": "/^crit.*/",
+              "color": "#bf1b00"
+            }
+          ],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "advancedMode": true,
+              "expr": "$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n\n[ \n  $token \n  'os.net.bytes' \n  { 'host' $nodes 'direction' 'out' 'iface' '~(ens|eth).+' }\n  $end $interval\n]\nFETCH \n[ SWAP mapper.delta 1 0 0 ] MAP\n\n[ SWAP bucketizer.last $end $BUCKET_SIZE $BUCKET_COUNT ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT",
+              "friendlyQuery": {
+                "readToken": "",
+                "className": "sd.rack.v2.",
+                "labels": {},
+                "bucketizer": null,
+                "bucketCount": 50,
+                "reducer": null,
+                "reducerLabels": [],
+                "filter": null,
+                "filterLabels": [],
+                "filterParamNumber": 0,
+                "filterParamMap": {},
+                "filterParamClass": "",
+                "bucketizers": [
+                  "sum",
+                  "max",
+                  "min",
+                  "mean",
+                  "mean.circular",
+                  "bucketizer.mean.circular.exclude-nulls",
+                  "first",
+                  "last",
+                  "join",
+                  "median",
+                  "count",
+                  "and",
+                  "or"
+                ],
+                "reducers": [
+                  "argmax",
+                  "argmin",
+                  "count",
+                  "count.exclude-nulls",
+                  "count.include-nulls",
+                  "join",
+                  "join.forbid-nulls",
+                  "max",
+                  "max.forbid-nulls",
+                  "mean",
+                  "mean.exclude-nulls",
+                  "mean.circular",
+                  "mean.circular.exclude-nulls",
+                  "median",
+                  "min",
+                  "min.forbid-nulls",
+                  "and",
+                  "and.exclude-nulls",
+                  "or",
+                  "or.exclude-nulls",
+                  "sd",
+                  "shannonentropy.0",
+                  "shannonentropy.1",
+                  "sum",
+                  "sum.forbid-nulls",
+                  "var"
+                ],
+                "filters": [
+                  {
+                    "name": "byclass",
+                    "type": "S"
+                  },
+                  {
+                    "name": "bylabels",
+                    "type": "M"
+                  },
+                  {
+                    "name": "last.eq",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ne",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.gt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.ge",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.lt",
+                    "type": "N"
+                  },
+                  {
+                    "name": "last.le",
+                    "type": "N"
+                  }
+                ]
+              },
+              "hide": false,
+              "hideAttributes": true,
+              "hideLabels": true,
+              "refId": "A",
+              "ws": "1552276358129000 'start' STORE '2019-03-11T03:52:38.129Z' 'startISO' STORE 1552297958129000 'end' STORE '2019-03-11T09:52:38.129Z' 'endISO' STORE 21600000000 'interval' STORE 22594142 '__interval' STORE 22594 '__interval_ms' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' '$token' STORE 'ZZIXbDNEACOo5a4RhUID9uTXNwQ.A0tfmbDmydjIrtBISU3N4VdpzjhoI9mfdkV4S0wGZdSZkZefjbn_S1U77jd4ozKWX2wxfVcWaGCm56mxvb4HSPBjNl.BNQyA2.Ci3NOYbpU78Xpw3syc0.2sGAZnvG9AXbpS' 'token' STORE '~.*' 'nodes' STORE \n$interval $__interval / 10 / 'BUCKET_COUNT' STORE\n$interval $BUCKET_COUNT / 'BUCKET_SIZE' STORE\n\n'renameWithMultipleLabelValues@1.0.0' FIMPORT\n'grafanaMultiVariable@1.0.1' FIMPORT\n\n\n$nodes @grafanaMultiVariable 'All' '~.*' REPLACE 'nodes' STORE\n\n\n[ \n  $token \n  'os.net.bytes' \n  { 'host' $nodes 'direction' 'out' 'iface' '~(ens|eth).+' }\n  $end $interval\n]\nFETCH \n[ SWAP mapper.delta 1 0 0 ] MAP\n\n[ SWAP bucketizer.last $end $BUCKET_SIZE $BUCKET_COUNT ] BUCKETIZE\n\n[ 'host' ] '' @renameWithMultipleLabelValues\n\nSORT"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Network Output Data",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    }
+  ],
+  "schemaVersion": 14,
+  "style": "dark",
+  "tags": [
+    "kubernetes",
+    "warp10"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": "~.*",
+        "current": {},
+        "datasource": "${DS_WARP_10 PRESCIENCE}",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Nodes",
+        "multi": true,
+        "name": "nodes",
+        "options": [],
+        "query": "$token AUTHENTICATE [ $token 'os.mem' { } ] FIND <% DROP LABELS 'host' GET %> LMAP LSORT UNIQUE",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "Kubernetes Nodes Monitorings",
+  "version": 7
+}

@@ -49,3 +49,24 @@ grafana:
       maxLines: 1000
   image:
     tag: 10.0.2
+  #dashboardProviders:
+  # dashboardproviders.yaml:
+  #   apiVersion: 1
+  #   providers:
+  #   - name: 'default'
+  #     orgId: 1
+  #     folder: ''
+  #     type: file
+  #     disableDeletion: false
+  #     editable: true
+  #     options:
+  #       path: /var/lib/grafana/dashboards/default
+
+  #dashboardsConfigMaps:
+  #  default: "grafana-dashboards"
+  dashboards:
+    default:
+      custom-dashboard:
+        file: dashboards/custom-dashboard.json
+      local-dashboard:
+        url: https://raw.githubusercontent.com/user/repository/master/dashboards/dashboard.json
