@@ -103,7 +103,9 @@ PASSWORDS ERROR: You must provide your current passwords when upgrading the rele
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
 helm show values grafana/loki-stack > values-orig-grafana-loki-stack.yaml
+helm show values grafana/grafana > values-orig-grafana.yaml
 helm pull grafana/loki-stack  --untar
+helm pull grafana/grafana --untar
 helm upgrade --install loki grafana/loki-stack -f loki-stack-values.yaml --namespace logging --create-namespace
 # helm upgrade --install grafana grafana/grafana -f loki-stack-values.yaml --namespace logging --create-namespace
 helm upgrade --install loki grafana/loki-stack  --set grafana.enabled=true,prometheus.enabled=true,prometheus.alertmanager.persistentVolume.enabled=false,prometheus.server.persistentVolume.enabled=false,loki.persistence.enabled=true,loki.persistence.storageClassName=local-path,loki.persistence.size=5Gi --namespace logging --create-namespace
@@ -133,3 +135,32 @@ kubectl get pvc -n logging
 kubectl taint nodes sd-k8s4-cp node-role.kubernetes.io/control-plane:NoSchedule
 Удалить:
 kubectl taint nodes sd-k8s4-cp node-role.kubernetes.io/control-plane:NoSchedule-
+
+Evicted:
+kubectl describe pod loki-prometheus-node-exporter-cz6q7 -n logging
+
+Недостаток памяти (MemoryPressure)
+Недостаток CPU (CPUPressure)
+Дефицит дискового пространства (DiskPressure)
+Taints и Tolerations на control-plane узле, из-за которых поды могут быть вытеснены.
+
+
+Глянуть:
+Volumes:
+  nextcloud-main:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+Pod was rejected: The node had condition: [DiskPressure].
+
+Удаление всех Evicted подов в namespace nextcloud:
+kubectl delete pod -n nextcloud --field-selector=status.phase=Failed
+
+
+Grafana Dashboards:
+kubectl apply -f .\Grafana-dashboards\ConfigMap.yaml
+kubectl rollout restart deployment.apps/loki-grafana -n logging
+Не сработало. Нашел вариант:
+https://community.grafana.com/t/how-to-upload-dashboards-as-json-files-to-kubernetes-via-helm/59731
+Интересное:
+To update current configmap use below command.
+kubectl replace -f custom-dashboards.yaml -n monitoring
+https://github.com/23ewrdtf/notes/blob/master/Grafana/Readme.MD
