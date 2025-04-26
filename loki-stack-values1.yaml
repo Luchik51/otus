@@ -49,24 +49,32 @@ grafana:
       maxLines: 1000
   image:
     tag: 10.0.2
-  #dashboardProviders:
-  # dashboardproviders.yaml:
-  #   apiVersion: 1
-  #   providers:
-  #   - name: 'default'
-  #     orgId: 1
-  #     folder: ''
-  #     type: file
-  #     disableDeletion: false
-  #     editable: true
-  #     options:
-  #       path: /var/lib/grafana/dashboards/default
+  persistence:
+    type: pvc
+    enabled: true
+    # storageClassName: default
+    accessModes:
+      - ReadWriteOnce
+    size: 3Gi
+  dashboardProviders:
+   dashboardproviders.yaml:
+     apiVersion: 1
+     providers:
+     - name: 'default'
+       orgId: 1
+       folder: ''
+       type: file
+       disableDeletion: false
+       editable: true
+       options:
+         path: /var/lib/grafana/dashboards/default
 
-  #dashboardsConfigMaps:
-  #  default: "grafana-dashboards"
-  dashboards:
-    default:
-      custom-dashboard:
-        file: dashboards/custom-dashboard.json
-      local-dashboard:
-        url: https://raw.githubusercontent.com/user/repository/master/dashboards/dashboard.json
+  dashboardsConfigMaps:
+    default: "grafana-dashboards"
+  
+  #dashboards:
+  #  default:
+  #    custom-dashboard:
+  #      file: "grafana-dashboards/6417_rev1 (Kubernetes Cluster (Prometheus)).json"
+  #    local-dashboard:
+  #      url: "https://raw.githubusercontent.com/Luchik51/otus/refs/heads/logging/grafana-dashboards/747_rev2%20(Kubernetes%20Pod%20Metrics).json"

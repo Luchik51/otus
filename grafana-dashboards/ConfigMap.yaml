@@ -1,7 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-dashboard-470-rev1
+  name: grafana-dashboards
+  #name: grafana-dashboard-470-rev1
   namespace: logging
   labels:
     grafana_dashboard: "1"  # Важно для Sidecar!
