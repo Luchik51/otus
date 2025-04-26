@@ -158,9 +158,19 @@ kubectl delete pod -n nextcloud --field-selector=status.phase=Failed
 Grafana Dashboards:
 kubectl apply -f .\Grafana-dashboards\ConfigMap.yaml
 kubectl rollout restart deployment.apps/loki-grafana -n logging
+kubectl exec -it loki-grafana-55b975b95f-mcgw5 -n logging -c grafana -- ls /var/lib/grafana/dashboards/default
 Не сработало. Нашел вариант:
 https://community.grafana.com/t/how-to-upload-dashboards-as-json-files-to-kubernetes-via-helm/59731
 Интересное:
 To update current configmap use below command.
 kubectl replace -f custom-dashboards.yaml -n monitoring
 https://github.com/23ewrdtf/notes/blob/master/Grafana/Readme.MD
+
+забрать себе конфиг мап: 
+kubectl get configmap loki-grafana-dashboards-default -n logging -o yaml
+
+kubectl get all -n logging
+helm delete loki -n logging
+kubectl delete pvc --all -n logging
+kubectl apply -f .\grafana-dashboards\ConfigMap.yaml
+helm upgrade --install loki grafana/loki-stack -f loki-stack-values1.yaml --namespace logging --create-namespace
