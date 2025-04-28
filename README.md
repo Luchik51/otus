@@ -106,6 +106,8 @@ helm show values grafana/loki-stack > values-orig-grafana-loki-stack.yaml
 helm show values grafana/grafana > values-orig-grafana.yaml
 helm pull grafana/loki-stack  --untar
 helm pull grafana/grafana --untar
+helm pull grafana/loki --untar
+helm pull grafana/promtail --untar
 helm upgrade --install loki grafana/loki-stack -f loki-stack-values.yaml --namespace logging --create-namespace
 # helm upgrade --install grafana grafana/grafana -f loki-stack-values.yaml --namespace logging --create-namespace
 helm upgrade --install loki grafana/loki-stack  --set grafana.enabled=true,prometheus.enabled=true,prometheus.alertmanager.persistentVolume.enabled=false,prometheus.server.persistentVolume.enabled=false,loki.persistence.enabled=true,loki.persistence.storageClassName=local-path,loki.persistence.size=5Gi --namespace logging --create-namespace
@@ -155,7 +157,7 @@ Pod was rejected: The node had condition: [DiskPressure].
 kubectl delete pod -n nextcloud --field-selector=status.phase=Failed
 
 
-Grafana Dashboards:
+Grafana Dashboards: - sd-k8s4-grafana.patio-minsk.by
 kubectl apply -f .\Grafana-dashboards\ConfigMap.yaml
 kubectl rollout restart deployment.apps/loki-grafana -n logging
 kubectl exec -it loki-grafana-55b975b95f-mcgw5 -n logging -c grafana -- ls /var/lib/grafana/dashboards/default
@@ -166,6 +168,15 @@ To update current configmap use below command.
 kubectl replace -f custom-dashboards.yaml -n monitoring
 https://github.com/23ewrdtf/notes/blob/master/Grafana/Readme.MD
 
+
+
+https://habr.com/ru/articles/772702/ - хорошая стратья по настройке визуализации логов от Loki в Grafana
+{app="nextcloud"} |= `GET /avatar/` - авторизации
+{app="nextcloud"} |= `GET /logout` - выход
+{app="nextcloud"} |= `GET /login?direct=1&user=` - не удачнве попытки авторизации
+{app="nextcloud"} |= `207 148` - правка файлов
+
+
 забрать себе конфиг мап: 
 kubectl get configmap loki-grafana-dashboards-default -n logging -o yaml
 
@@ -174,3 +185,12 @@ helm delete loki -n logging
 kubectl delete pvc --all -n logging
 kubectl apply -f .\grafana-dashboards\ConfigMap.yaml
 helm upgrade --install loki grafana/loki-stack -f loki-stack-values1.yaml --namespace logging --create-namespace
+
+
+Alermanager - sd-k8s4-alertmanager.patio-minsk.by
+https://1cloud.ru/help/monitoring_system_helps/receive_alerts_in_telegram
+Successfully created new token: 2ef978.
+https://www.youtube.com/watch?v=nz5xMoY1d6c - все в одном. Полезное видео.
+А это репозиторий из видео - https://github.com/digitalstudium/grafana-docker-stack/blob/alertmanager/configs/prometheus/alert_rules.yml - там есть правила, но они для docker - для кубернетеса надо запросы в prometheus писать.
+https://habr.com/ru/companies/agima/articles/524654/ - prometheus + redis + alermanager (slack + email) + blackbox (HTTP target статус сайта)
+https://medium.com/@bavicnative/alerting-incident-management-in-kubernetes-configuring-alerts-with-alertmanager-f744500c4b9b - примеры правил. Оказывается, настраиваютсья через values prometheus (serverFiles: alerting_rules.yml:)
