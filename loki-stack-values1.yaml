@@ -8,6 +8,26 @@ prometheus:
   - key: "node-role.kubernetes.io/control-plane"
     operator: "Exists"
     effect: "NoSchedule"
+  # Sub-chart loki-stack - charts - prometheus - alertmanager
+  #https://github.com/prometheus-community/helm-charts/tree/main/charts/alertmanager
+  alertmanager:
+    enabled: true
+    config:
+      receivers:
+        - name: telepush
+          webhook_configs:
+            - url: 'https://telepush.dev/api/inlets/alertmanager/2ef978' #URL с токеном после последнего слеша
+              http_config:
+      route:        
+        receiver: 'telepush'
+        routes:
+         — match:
+             severity: critical
+           receiver: slack-alert
+           continue: true
+         — match:
+             severity: critical
+           receiver: email-alert
 
 loki:
   enabled: true
@@ -71,7 +91,7 @@ grafana:
 
   dashboardsConfigMaps:
     default: "grafana-dashboards"
-  
+
   #dashboards:
   #  default:
   #    custom-dashboard:
