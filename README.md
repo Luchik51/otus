@@ -194,3 +194,8 @@ https://www.youtube.com/watch?v=nz5xMoY1d6c - все в одном. Полезн
 А это репозиторий из видео - https://github.com/digitalstudium/grafana-docker-stack/blob/alertmanager/configs/prometheus/alert_rules.yml - там есть правила, но они для docker - для кубернетеса надо запросы в prometheus писать.
 https://habr.com/ru/companies/agima/articles/524654/ - prometheus + redis + alermanager (slack + email) + blackbox (HTTP target статус сайта)
 https://medium.com/@bavicnative/alerting-incident-management-in-kubernetes-configuring-alerts-with-alertmanager-f744500c4b9b - примеры правил. Оказывается, настраиваютсья через values prometheus (serverFiles: alerting_rules.yml:)
+
+
+Не смотрел (возможно, полезно): 
+https://dev.to/ruanbekker/how-to-setup-alerting-with-loki-kmj
+https://dbadbadba.com/blog/finocchiaro-loki
