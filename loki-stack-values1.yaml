@@ -1,5 +1,16 @@
 prometheus:
   enabled: true
+  server:
+    replicaCount: 2
+    ## Server Deployment Strategy type
+    #strategy:
+    #  type: RollingUpdate #Recreate
+    statefulSet:
+      enabled: true
+    #service:
+      #statefulsetReplica:
+      #  enabled: true
+      #  replica: 2
   isDefault: false
   url: http://{{ include "prometheus.fullname" .}}:{{ .Values.prometheus.server.service.servicePort }}{{ .Values.prometheus.server.prefixURL }}
   datasource:
@@ -12,25 +23,43 @@ prometheus:
   #https://github.com/prometheus-community/helm-charts/tree/main/charts/alertmanager
   alertmanager:
     enabled: true
+    replicaCount: 2
     config:
       receivers:
+        - name: 'telegram'
+          telegram_configs:
+          - bot_token: "7953385693:AAHPVau07SF7I-E3iXsL8N3EC5vl9zZpQns"
+            chat_id: -630538347
         - name: telepush
           webhook_configs:
             - url: 'https://telepush.dev/api/inlets/alertmanager/2ef978' #URL с токеном после последнего слеша
               http_config:
       route:        
-        receiver: 'telepush'
-        routes:
-         — match:
-             severity: critical
-           receiver: slack-alert
-           continue: true
-         — match:
-             severity: critical
-           receiver: email-alert
+        receiver: 'telegram'
+        routes:    
+        # All alerts with severity=warning or severity=critical
+        # are dispatched to the telegram receiver.
+        - receiver: 'telegram'
+          group_wait: 10s
+          matchers:
+          - severity=~"warning|critical"
+  serverFiles:
+    alerting_rules.yml:
+      groups:
+      - name: Prometheus self-monitoring
+        rules:
+        - alert: Prometheus target missing
+          expr: 'up == 0'
+#          annotations:
+#          description: A Prometheus target has disappeared. An exporter might be crashed.
+#          labels:
+#            severity: critical
+
+        
 
 loki:
   enabled: true
+  replicas: 2
   isDefault: true
   url: http://{{(include "loki.serviceName" .)}}:{{ .Values.loki.service.port }}
   readinessProbe:
@@ -61,6 +90,8 @@ promtail:
 
 grafana:
   enabled: true 
+  useStatefulSet: true
+  #replicas: 2
   sidecar:
     datasources:
       label: ""

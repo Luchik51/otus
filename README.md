@@ -1,4 +1,26 @@
-# otus
+# OTUS. Инфраструктурная платформа на основе Kubernetes. 25 декабря 2024 года — 9 мая 2025
+# Проектная работа
+
+## Задание: подготовка MVP инфраструктурной платформы для приложения-примера
+### Требовнания. MVP платформы обязательно включает в себя:
+Kubernetes (managed или self-hosted)
+Мониторинг кластера и приложения с алертами и дашбордами
+Централизованное логирование для кластера и приложений 
+Обязательно в виде кода в репозитории:
+Публичный
+CI/CD пайплайн для приложения (Gitlab CI, Github Actions, etc)
+Автоматизация создания и настройки кластера
+Развертывание и настройки сервисов платформы
+Настройки мониторинга, алерты, дашборды
+
+**МVP** — это аббревиатура, которая расшифровывается как Minimum Viable Product (минимально жизнеспособный продукт).  
+Это начальная версия продукта, которая содержит только основные функции, необходимые для запуска на рынке и получения обратной связи от пользователей. Цель MVP — быстрее вывести продукт, минимизировать затраты на разработку и определить наиболее важные функции, которые ценят пользователи.
+
+
+В качестве MPV будет:
+managed Kubernetes кластер в Yandex Cloud
+Приложение Nextcloud (состоящее из Web-сервера Apache, сервера баз данных MySQL, кэшировние авторизаций Redis)
+Мониторинг и логирование Loki-stack (Loki (хранение логов) + prometheus (мониторинг) + grafana (визуализация) + alermanager (уведомления) + promtail (сбор логов))
 
 Как организовать создание кубернетес кластера в яндекс клоуд и разместить приложения:
 Предварительно надо надо 3 секрета разместить в github:
@@ -11,8 +33,7 @@ YC_FOLDER_ID – ID вашего фолдера в Yandex Cloud
 YC_CLOUD_ID – ID облака (можно найти в настройках облака)
 
 Про содержимое key.json оно делаеться так:
-нам надо создать сервисный аккаунт с правами достаточными для создания кубернетес кластера (k8s.clusters.agent и vpc.publicAdmin
-)
+нам надо создать сервисный аккаунт с правами достаточными для создания кубернетес кластера (k8s.clusters.agent и vpc.publicAdmin)
 И запустить команду:
 yc iam key create --service-account-id $RES_SA_ID --output key.json
 где $RES_SA_ID = id этого сервисного аккаунта.
@@ -196,6 +217,38 @@ https://habr.com/ru/companies/agima/articles/524654/ - prometheus + redis + aler
 https://medium.com/@bavicnative/alerting-incident-management-in-kubernetes-configuring-alerts-with-alertmanager-f744500c4b9b - примеры правил. Оказывается, настраиваютсья через values prometheus (serverFiles: alerting_rules.yml:)
 
 
+Бот: Otus_Project_2025
+Otus_Project_2025_bot
+Done! Congratulations on your new bot. You will find it at t.me/Otus_Project_2025_bot. You can now add a description, about section and profile picture for your bot, see /help for a list of commands. By the way, when you've finished creating your cool bot, ping our Bot Support if you want a better username for it. Just make sure the bot is fully operational before you do this.
+
+Use this token to access the HTTP API:
+7953385693:AAHPVau07SF7I-E3iXsL8N3EC5vl9zZpQns
+Keep your token secure and store it safely, it can be used by anyone to control your bot.
+
+For a description of the Bot API, see this page: https://core.telegram.org/bots/api
+Шаблон: https://api.telegram.org/botINSERT_BOT_ID_HERE/getUpdates
+Мой: https://api.telegram.org/bot7953385693:AAHPVau07SF7I-E3iXsL8N3EC5vl9zZpQns/getUpdates
+
 Не смотрел (возможно, полезно): 
 https://dev.to/ruanbekker/how-to-setup-alerting-with-loki-kmj
 https://dbadbadba.com/blog/finocchiaro-loki
+
+Метрики:
+up{job="kubernetes-service-endpoints"} == 0 - почему-то только один сервер.
+up{job="kubernetes-nodes"} == 1 - работают
+up{job="kubernetes-nodes"} == 0 - не работают
+kubectl exec -it loki-prometheus-server-0 -n logging -- curl -s http://localhost:9090/api/v1/rules
+
+Проверка связанности: https://sd-k8s4-prometheus.patio-minsk.by/api/v1/alertmanagers
+Проверка наличия правил: https://sd-k8s4-prometheus.patio-minsk.by/api/v1/alerts
+kubectl rollout restart statefulset.apps/loki-prometheus-server -n logging
+kubectl rollout restart statefulset.apps/loki-alertmanager -n logging
+Оказываеться не перезапускались поды = не обновлялась конфигурация.
+kubectl logs loki-prometheus-server-0 -c prometheus-server -n logging
+kubectl get ConfigMap loki-prometheus-server -n logging -o yaml
+
+# Удаляем Pod с автоматическим пересозданием
+kubectl delete pod loki-prometheus-server-0 -n logging --grace-period=0 --force
+kubectl delete pod loki-prometheus-server-1 -n logging --grace-period=0 --force
+# Полный сброс StatefulSet (если нужно)
+kubectl rollout restart statefulset loki-prometheus-server -n logging
