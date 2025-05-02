@@ -252,3 +252,30 @@ kubectl delete pod loki-prometheus-server-0 -n logging --grace-period=0 --force
 kubectl delete pod loki-prometheus-server-1 -n logging --grace-period=0 --force
 # Полный сброс StatefulSet (если нужно)
 kubectl rollout restart statefulset loki-prometheus-server -n logging
+
+Тестовое сообщение (проверил - работает):
+curl -X POST \
+  "https://api.telegram.org/bot7953385693:AAHPVau07SF7I-E3iXsL8N3EC5vl9zZpQns/sendMessage" \
+  -d "chat_id=630538347&text=Test+message"
+
+kubectl delete statefulset.apps/loki-alertmanager -n logging
+kubectl delete pvc storage-loki-alertmanager-0 storage-loki-alertmanager-1 -n logging
+
+kubectl delete pod/loki-alertmanager-0 -n logging --grace-period=0 --force
+
+Уведомления через alermanager логов с Loki - пока не понятно. Надо какая-то связь Loki + Alertmanage, как у прометеуса.
+Нашел что-то:
+# Needed for Alerting: https://grafana.com/docs/loki/latest/rules/
+# This is just a simple example, for more details: https://grafana.com/docs/loki/latest/configuration/#ruler_config
+#  ruler:
+#    storage:
+#      type: local
+#      local:
+#        directory: /rules
+#    rule_path: /tmp/scratch
+#    alertmanager_url: http://alertmanager.svc.namespace:9093
+#    ring:
+#      kvstore:
+#        store: inmemory
+#    enable_api: true
+Не делал.

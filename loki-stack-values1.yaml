@@ -26,36 +26,42 @@ prometheus:
     replicaCount: 2
     config:
       receivers:
-        - name: 'telegram'
-          telegram_configs:
-          - bot_token: "7953385693:AAHPVau07SF7I-E3iXsL8N3EC5vl9zZpQns"
-            chat_id: -630538347
-        - name: telepush
-          webhook_configs:
-            - url: 'https://telepush.dev/api/inlets/alertmanager/2ef978' #URL с токеном после последнего слеша
-              http_config:
+      - name: 'telegram'
+        telegram_configs:
+        - bot_token: "7953385693:AAHPVau07SF7I-E3iXsL8N3EC5vl9zZpQns"
+          chat_id: 630538347
       route:        
-        receiver: 'telegram'
-        routes:    
-        # All alerts with severity=warning or severity=critical
-        # are dispatched to the telegram receiver.
-        - receiver: 'telegram'
+        receiver: 'telegram'  # Резервный получатель (может быть пустым)
+        routes:
+        - receiver: 'telegram'  # Основной получатель для важных алертов
           group_wait: 10s
           matchers:
-          - severity=~"warning|critical"
+          - severity=~"warning|critical"        
   serverFiles:
     alerting_rules.yml:
       groups:
       - name: Prometheus self-monitoring
         rules:
-        - alert: Prometheus target missing
-          expr: 'up == 0'
-#          annotations:
-#          description: A Prometheus target has disappeared. An exporter might be crashed.
-#          labels:
-#            severity: critical
-
-        
+        - alert: NodeDown
+          expr: up{job="kubernetes-nodes"} == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Node down (instance {{ $labels.instance }})"
+            description: "Node {{ $labels.instance }} has been down for more than 5 minutes."
+      - name: Logs Loki
+        rules:    
+        - name: nextcloud-alerts
+          rules:
+          - alert: NextcloudLoginAttempt
+            expr: count_over_time({app="nextcloud"} |= `GET /login?direct=1&user=` [5m]) > 0
+            labels:
+              severity: warning
+            annotations:
+              summary: "Nextcloud login attempt detected"
+              description: "Detected login attempt in Nextcloud: {{ $labels.instance }} - {{ printf \"%.1000s\" (index (index .Alerts 0).Annotations \"log_message\") }}"
+              log_message: '{{ reReplaceAll "\n" " " (index (index .Alerts 0).Labels "log") }}'
 
 loki:
   enabled: true
