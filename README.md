@@ -33,7 +33,7 @@ YC_FOLDER_ID – ID вашего фолдера в Yandex Cloud
 YC_CLOUD_ID – ID облака (можно найти в настройках облака)
 
 Про содержимое key.json оно делаеться так:
-нам надо создать сервисный аккаунт с правами достаточными для создания кубернетес кластера (k8s.clusters.agent и vpc.publicAdmin)
+нам надо создать сервисный аккаунт с правами достаточными (vpc.publicAdmin, container-registry.images.puller, k8s.cluster-api.cluster-admin, k8s.admin, load-balancer.admin, k8s.clusters.agent) для создания кубернетес кластера (k8s.clusters.agent и vpc.publicAdmin)
 И запустить команду:
 ```
 $RES_SA_ID=ID
