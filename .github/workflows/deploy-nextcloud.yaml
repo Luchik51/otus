@@ -133,4 +133,5 @@ jobs:
     # Получение внешнего IP (опционально)
     - name: Get Nextcloud External IP
       run: |
-        kubectl get service nextcloud -n nextcloud
+        kubectl get ingress -n nextcloud
+        kubectl get ingress -n logging
