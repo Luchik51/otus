@@ -49,19 +49,16 @@ prometheus:
             severity: critical
           annotations:
             summary: "Node down (instance {{ $labels.instance }})"
-            description: "Node {{ $labels.instance }} has been down for more than 5 minutes."
-      - name: Logs Loki
-        groups:    
-        - name: nextcloud-alerts
-          rules:
-          - alert: NextcloudLoginAttempt
-            expr: count_over_time({app="nextcloud"} |= `GET /login?direct=1&user=` [5m]) > 0
-            labels:
-              severity: warning
-            annotations:
-              summary: "Nextcloud login attempt detected"
-              description: "Detected login attempt in Nextcloud: {{ $labels.instance }} - {{ printf \"%.1000s\" (index (index .Alerts 0).Annotations \"log_message\") }}"
-              log_message: '{{ reReplaceAll "\n" " " (index (index .Alerts 0).Labels "log") }}'
+            description: "Node {{ $labels.instance }} has been down for more than 1 minutes."
+        - alert: Nextcloud down
+          expr: nextcloud_up == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Nextcloud down (instance {{ $labels.instance }})"
+            description: "Nextcloud been down for more than 1 minutes."
+
 
 loki:
   enabled: true
