@@ -135,3 +135,8 @@ jobs:
       run: |
         kubectl get ingress -n nextcloud
         kubectl get ingress -n logging
+
+    # Получение пароля от Grafana
+    - name: Get Grafana password
+      run: |
+        kubectl get secret --namespace logging grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
