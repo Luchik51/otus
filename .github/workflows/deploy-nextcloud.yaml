@@ -91,6 +91,8 @@ jobs:
     # Установка Helm
     - name: Install Helm
       uses: azure/setup-helm@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     # Установка CSI-драйвера
     #- name: Deploy Yandex S3
@@ -119,11 +121,6 @@ jobs:
         helm repo update
         helm upgrade --install nextcloud nextcloud/nextcloud -f values-nc.yaml -n nextcloud --create-namespace
 
-    # Получение внешнего IP (опционально)
-    - name: Get Nextcloud External IP
-      run: |
-        kubectl get service nextcloud -n nextcloud
-
     # Установка мониторинга
     - name: Deploy Loki-Stack
       run: |
@@ -132,3 +129,8 @@ jobs:
         helm upgrade --install loki grafana/loki-stack -f loki-stack-values1.yaml --namespace logging --create-namespace
         kubectl apply -f ./grafana-dashboards/ConfigMap.yaml
         kubectl apply -f ingress.yaml
+
+    # Получение внешнего IP (опционально)
+    - name: Get Nextcloud External IP
+      run: |
+        kubectl get service nextcloud -n nextcloud
