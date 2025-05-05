@@ -112,8 +112,8 @@ jobs:
     # Установка мониторинга
     - name: Deploy Loki-Stack
       run: |
-        kubectl apply -f ./grafana-dashboards/ConfigMap.yaml
         helm repo add grafana https://grafana.github.io/helm-charts
         helm repo update
         helm upgrade --install loki grafana/loki-stack -f loki-stack-values1.yaml --namespace logging --create-namespace
+        kubectl apply -f ./grafana-dashboards/ConfigMap.yaml
         kubectl apply -f ingress.yaml
