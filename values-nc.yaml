@@ -1,8 +1,8 @@
 #replicaCount: 3
 
-service:
-  type: LoadBalancer
-  loadBalancerIP: 10.100.48.41
+#service:
+  #type: LoadBalancer
+  #loadBalancerIP: 10.100.48.41
 
 ingress:
   enabled: true
