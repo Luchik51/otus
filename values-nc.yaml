@@ -19,8 +19,7 @@ ingress:
           path: /
 
 nextcloud:
-  #host: notus.patio-minsk.by
-  host: notus.patio-minsk.by
+  host: next.cloud.of.by #notus.patio-minsk.by
   username: "luchik"
   password: "111111"
 

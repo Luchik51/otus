@@ -51,7 +51,7 @@ prometheus:
             summary: "Node down (instance {{ $labels.instance }})"
             description: "Node {{ $labels.instance }} has been down for more than 5 minutes."
       - name: Logs Loki
-        rules:    
+        groups:    
         - name: nextcloud-alerts
           rules:
           - alert: NextcloudLoginAttempt

@@ -101,6 +101,16 @@ jobs:
     #      --set secret.secretKey=${{ env.YC_S3_SECRETKEY }} \
     #      --set storageClass.singleBucket=nextcloud2
 
+    # Установка ingress
+    - name: Deploy Ingress NGINX
+      run: |
+        helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+        helm repo update
+        helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx  \
+        --set controller.service.loadBalancerIP=${{ env.YC_STATIC_IP }} \
+        --set controller.service.externalTrafficPolicy=Cluster \
+        -n ingress-nginx --create-namespace
+
     # Установка Nextcloud
     - name: Deploy Nextcloud
       run: |
