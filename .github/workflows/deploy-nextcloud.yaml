@@ -77,15 +77,15 @@ jobs:
           echo "Node group 'k8s-demo-ng' already exists, skipping creation"
         fi
 
-    # Помечаем наши ноды воркерами
-    - name: Set all nodes worker
-      run: kubectl label nodes --all node-role.kubernetes.io/worker=
-
     # Получение kubeconfig
     - name: Get Kubeconfig
       run: |
         yc managed-kubernetes cluster get-credentials ${{ env.YC_CLUSTER_NAME }} --external
         kubectl config view --raw > kubeconfig.yaml
+
+    # Помечаем наши ноды воркерами
+    - name: Set all nodes worker
+      run: kubectl label nodes --all node-role.kubernetes.io/worker=
 
     # Установка Helm
     - name: Install Helm
