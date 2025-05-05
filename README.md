@@ -56,8 +56,8 @@ yc vpc address list
 
 Любая публикация в main ветку запустил Actions Workflow.
 
-Ссылки на опубликованные приложения:
-[Nextcloud](http://next.cloud.of.by)  
+Ссылки на опубликованные приложения:  
+[Nextcloud](http://next.cloud.of.by) - "облако" для файлов с совместным редактирвоанием и большим колилчесвом дополнительного функционала, например, почта, календарь, опросник, чат  
 [Grafana](http://grafana.cloud.of.by) - визуализация мониторига и логирования  
 [Prometheus](http://prometheus.cloud.of.by) - мониторинг  
 [Alermanager](http://alertmanager.cloud.of.by) - уведомления  

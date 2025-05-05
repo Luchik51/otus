@@ -139,4 +139,4 @@ jobs:
     # Получение пароля от Grafana
     - name: Get Grafana password
       run: |
-        kubectl get secret --namespace logging grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+        kubectl get secret --namespace logging loki-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
