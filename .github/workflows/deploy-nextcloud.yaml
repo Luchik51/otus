@@ -97,13 +97,23 @@ jobs:
     #      --set secret.secretKey=${{ env.YC_S3_SECRETKEY }} \
     #      --set storageClass.singleBucket=nextcloud2
 
-    # Установка Nextcloud AIO
-    - name: Deploy Nextcloud AIO
+    # Установка Nextcloud
+    - name: Deploy Nextcloud
       run: |
-        helm repo add nextcloud-aio https://nextcloud.github.io/all-in-one/
-        helm upgrade --install nextcloud-aio ./nextcloud-aio-helm-chart -f values.yaml
+        helm repo add nextcloud https://nextcloud.github.io/helm/
+        helm repo update
+        helm upgrade --install nextcloud nextcloud/nextcloud -f values-nc.yaml -n nextcloud --create-namespace
 
     # Получение внешнего IP (опционально)
     - name: Get Nextcloud External IP
       run: |
-        kubectl get svc -n nextcloud
+        kubectl get service nextcloud -n nextcloud
+
+    # Установка мониторинга
+    - name: Deploy Loki-Stack
+      run: |
+        kubectl apply -f .\grafana-dashboards\ConfigMap.yaml
+        helm repo add grafana https://grafana.github.io/helm-charts
+        helm repo update
+        helm upgrade --install loki grafana/loki-stack -f loki-stack-values1.yaml --namespace logging --create-namespace
+        kubectl apply -f ingress.yaml
