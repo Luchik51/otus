@@ -23,6 +23,9 @@
 + Приложение Nextcloud (состоящее из Web-сервера Apache, сервера баз данных MySQL, кэшировние авторизаций Redis)
 + Мониторинг и логирование Loki-stack (Loki (хранение логов) + Prometheus (мониторинг) + Grafana (визуализация) + Alermanager (уведомления) + promtail (сбор логов))  
 
+![Диаграмма MVP](img/diagramm_MVP.png)
+
+
 **Минимальные требования настройки для запуска и отработки GitHub Action:**
 Предварительно надо надо 3 секрета разместить в github:
 В настройках репозитория (Settings → Secrets → Actions) добавьте:
@@ -47,7 +50,7 @@ yc vpc address create --external-ipv4 zone=ru-central1-a
 yc vpc address list
 # тот, что RESERVED = true и USED = false. Копируем его.
 ```
-Я его использую в CI, поэтому не забиваем внести в переменную YC_STATIC_IP файла deploy-nextcloud.yaml  
+Я его использую в CI, поэтому этот адрес надо внести переменную YC_STATIC_IP файла deploy-nextcloud.yaml  
 
 
 ---

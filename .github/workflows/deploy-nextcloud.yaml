@@ -110,7 +110,7 @@ jobs:
         helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
         helm repo update
         helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx  \
-        --set controller.service.loadBalancerIP=${{ env.YC_STATIC_IP }} \
+        --set controller.service.loadBalancerIP=${{ GITHUB_YC_STATIC_IP }} \
         --set controller.service.externalTrafficPolicy=Cluster \
         -n ingress-nginx --create-namespace
 
