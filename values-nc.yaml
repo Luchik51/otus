@@ -6,13 +6,20 @@
 
 ingress:
   enabled: true
-  #className: nginx
+  className: nginx
   hosts:
-    - host: notus.patio-minsk.by
+    - host: next.cloud.of.by #notus.patio-minsk.by
       paths:
-        - /
+        - pathType: Prefix
+          backend:
+            service:
+              name: nextcloud
+              port:
+                number: 8080
+          path: /
 
 nextcloud:
+  #host: notus.patio-minsk.by
   host: notus.patio-minsk.by
   username: "luchik"
   password: "111111"

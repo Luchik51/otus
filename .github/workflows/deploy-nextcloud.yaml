@@ -77,6 +77,10 @@ jobs:
           echo "Node group 'k8s-demo-ng' already exists, skipping creation"
         fi
 
+    # Помечаем наши ноды воркерами
+    - name: Set all nodes worker
+      run: kubectl label nodes --all node-role.kubernetes.io/worker=
+
     # Получение kubeconfig
     - name: Get Kubeconfig
       run: |

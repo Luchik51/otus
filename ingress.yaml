@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: sd-k8s4-grafana.patio-minsk.by
+  - host: grafana.cloud.of.by
     http:
       paths:
         - pathType: Prefix
@@ -19,10 +19,10 @@ spec:
               port:
                 number: 80
           path: /
-  tls:
-    - hosts:
-      - sd-k8s4-grafana.patio-minsk.by
-      secretName: patio-minsk
+  #tls:
+  #  - hosts:
+  #    - sd-k8s4-grafana.patio-minsk.by
+  #    secretName: patio-minsk
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -34,7 +34,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: sd-k8s4-alertmanager.patio-minsk.by
+  - host: alertmanager.cloud.of.by
     http:
       paths:
         - pathType: Prefix
@@ -44,10 +44,10 @@ spec:
               port:
                 number: 9093
           path: /
-  tls:
-    - hosts:
-      - sd-k8s4-alertmanager.patio-minsk.by
-      secretName: patio-minsk
+  #tls:
+  #  - hosts:
+  #    - sd-k8s4-alertmanager.patio-minsk.by
+  #    secretName: patio-minsk
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -59,7 +59,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: sd-k8s4-prometheus.patio-minsk.by
+  - host: prometheus.cloud.of.by
     http:
       paths:
         - pathType: Prefix
@@ -69,7 +69,32 @@ spec:
               port:
                 number: 80
           path: /
-  tls:
-    - hosts:
-      - sd-k8s4-prometheus.patio-minsk.by
-      secretName: patio-minsk
+  #tls:
+  #  - hosts:
+  #    - sd-k8s4-prometheus.patio-minsk.by
+  #    secretName: patio-minsk
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nextcloud2
+  namespace: nextcloud
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: next.cloud.of.by
+    http:
+      paths:
+        - pathType: Prefix
+          backend:
+            service:
+              name: nextcloud
+              port:
+                number: 8080
+          path: /
+  #tls:
+  #  - hosts:
+  #    - sd-k8s4-grafana.patio-minsk.by
+  #    secretName: patio-minsk
